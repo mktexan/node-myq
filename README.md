@@ -9,27 +9,33 @@ A module for the Chamberlain myQ garage door opener.
 ```javascript
 const myQ = require('node-myq')
 
-myQ.setCredentials('email@example.com', 'password', { autoSetGarageDoorDevice: true, deviceId: 213213})
+// If you have a single garage door device, you can pass autoSetGarageDoorDevice : true to automatically add your garage device by its id
+myQ.setCredentials('email@example.com', 'password', { autoSetGarageDoorDevice: true})
+
+// If you do not wish to automatically add your device, pass the device id
+myQ.setCredentials('email@example.com', 'password', { deviceId: 213213})
+
+// You can also leave the device id and autoSetGarageDoorDeviceout completely if you have a list of your own device id's. You will need to use the same user and password for each device or set a new myQ variable. 
+myQ.setCredentials('email@example.com', 'password')
 // Email and password are reqired
 // autoSetGarageDoorDevice will only work with one garage controller connected!
-// If not selected autoSetGarageDoorDevice, pass the device Id in the options
 
 // Use this method if you wish to manually set your device id or if you have more than one device
 myQ.getDevices().then(devices => {
-  console.log(devices) //returns array of devices
-}).catch(console.log) //Don't forget to catch errors
+ //returns array of devices
+}).catch(error => {})
 
 myQ.getState().then(state => {
-  console.log(state)
-}).catch(console.log)
+  //Returns a string of opened or closed
+}).catch(error => {})
 
 myQ.openDoor().then(door => {
-  console.log(door) //If this does not work, try other device Ids'
-}).catch(console.log)
+  // Promise resolves on success
+}).catch(error => {})
 
 myQ.closeDoor().then(door => {
-  console.log(door)
-}).catch(console.log)
+  // Promise resolves on success
+}).catch(error => {})
 ```
 
 # Methods
