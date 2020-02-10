@@ -8,7 +8,7 @@
   },
   "author": "Cole Stasney",
   "license": "MIT",
-  "homepage": "https://github.com/mktexan/node-myq",
+  "homepage": "https://github.com/mktexan/node-myq.git",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
   },
@@ -18,9 +18,5 @@
   ],
   "dependencies": {
     "request": "^2.81.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/mktexan/node-myq.git"
   }
 }
