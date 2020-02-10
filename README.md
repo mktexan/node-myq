@@ -2,15 +2,20 @@ A module for the Chamberlain myQ garage door opener.
 
 # Install
 
-`npm i --save node-myQ`
+`npm i --save node-myq`
 
 # Usage
 
 ```javascript
 const myQ = require('node-myq')
 
-// If you have a single garage door device, you can pass autoSetGarageDoorDevice : true 
-// to automatically add your garage device by its id
+// Available options. Only use one of these options at a time as 
+// auto set gets the device ID automatically
+let options = { autoSetGarageDoorDevice: true, deviceId: 213213}
+
+// If you have a single garage door device, you can pass 
+// autoSetGarageDoorDevice : true to automatically add your garage 
+// device by its id
 myQ.setCredentials('email@example.com', 'password', { autoSetGarageDoorDevice: true})
 
 // If you do not wish to automatically add your device, pass the device id
