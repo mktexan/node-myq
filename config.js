@@ -37,7 +37,7 @@ let constants = {
 }
 
 let token = ''
-let devices = []
+var devices = []
 
 module.exports = {
     config,
