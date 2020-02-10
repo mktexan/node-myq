@@ -45,14 +45,14 @@ myQ.closeDoor().then(door => {
 
 Promise, gets devices connected to your myQ account.
 
-## getState([deviceId])
+## getState()
 
 Promise resolves door state of "opened" or "closed"
 
-## openDoor([deviceId])
+## openDoor()
 
 Promis resolves on success of call
 
-## closeDoor([deviceId])
+## closeDoor()
 
 Promise resolves on success of call
