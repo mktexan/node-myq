@@ -1,6 +1,6 @@
 {
   "name": "node-myq",
-  "version": "1.2.0",
+  "version": "1.1.0",
   "description": "MyQ device controller",
   "main": "index.js",
   "scripts": {
@@ -8,15 +8,8 @@
   },
   "author": "Cole Stasney",
   "license": "MIT",
-  "homepage": "https://github.com/mktexan/node-myq.git",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  },
-  "keywords": [
-    "chamberlain",
-    "myq"
-  ],
+  "homepage": "https://github.com/mktexan/node-myq",
   "dependencies": {
-    "request": "^2.81.0"
+    "request": "^2.88.0"
   }
 }
