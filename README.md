@@ -1,4 +1,4 @@
-A module for the Chamberlain myQ garage door opener.
+A module for the Chamberlain - MyQ Smart Garage Hub
 
 # Install
 
