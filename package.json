@@ -1,11 +1,12 @@
 {
   "name": "node-myq",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "MyQ device controller",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Cole Stasney",
-  "license": "MIT"
+  "license": "MIT",
+  "homepage": "https://github.com/mktexan/node-myq"
 }
