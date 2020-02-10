@@ -84,8 +84,8 @@ const getState = async (deviceId) => {
         callMyQDevice(options, 'get').then(state => {
             const parsed = JSON.parse(state)
             let doorStatus
-            if (Number(parsed.AttributeValue) === 2) doorStatus = 'closed'
-            else doorStatus = 'open'
+            if (Number(parsed.AttributeValue) === 2) doorStatus = configuration.constants.closed
+            else doorStatus = configuration.constants.opened
             resolve(doorStatus)
         }).catch(error => reject(error))
     })

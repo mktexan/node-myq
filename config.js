@@ -33,7 +33,7 @@ let constants = {
     changeDeviceStateUrl: 'DeviceAttribute/PutDeviceAttribute',
     validateUrl: 'User/Validate',
     closed: 'closed',
-    open: 'open'
+    opened: 'opened'
 }
 
 let token = ''
