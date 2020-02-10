@@ -2,7 +2,7 @@
   "name": "node-myq",
   "version": "1.0.0",
   "description": "MyQ device controller",
-  "main": "myq.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
