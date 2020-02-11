@@ -21,7 +21,7 @@ myQ.getDevices().then(devices => {
  //returns array of devices
 }).catch(error => {})
 
-myQ.getState().then(state => {
+myQ.getDoorState().then(state => {
   //Returns a string of opened or closed
 }).catch(error => {})
 
@@ -32,6 +32,14 @@ myQ.openDoor().then(door => {
 myQ.closeDoor().then(door => {
   // Promise resolves on success
 }).catch(error => {})
+
+myQ.getLightState().then(door => {
+  // Promise resolves on success
+}).catch(error => {})
+
+myQ.setLightState().then(door => {
+  // Promise resolves on success
+}).catch(error => {})
 ```
 
 # Methods
@@ -40,7 +48,7 @@ myQ.closeDoor().then(door => {
 
 Promise, gets devices connected to your myQ account.
 
-## getState()
+## getDoorState()
 
 Promise resolves a string of Door State
 
@@ -51,6 +59,15 @@ Promis resolves on success of call
 ## closeDoor()
 
 Promise resolves on success of call
+
+## setLightState()
+
+Promise resolves on success of call
+
+## getLightState()
+
+Promise resolves on success of call
+
 
 
 ## Return Values

@@ -72,12 +72,12 @@ const getDevices = async () => {
     }).catch(error => reject(error))
 }
 
-const getState = async (deviceId) => {
+const getDoorState = async (deviceId) => {
     return new Promise(async (resolve, reject) => {
         deviceId = deviceId || configuration.config.deviceId
         const token = await getToken()
         const options = {
-            url: configuration.constants.baseUrl + configuration.constants.stateUrlFront + deviceId + configuration.constants.stateUrlEnd,
+            url: configuration.constants.baseUrl + configuration.constants.stateUrlFront + deviceId + configuration.constants.doorStateUrlEnd,
             headers: setHeader({ SecurityToken: token }),
             gzip: true
         }
@@ -131,8 +131,33 @@ const changeDeviceState = async (change, deviceId) => {
     })
 }
 
+const getLightState = () => {
+    return new Promise(async (resolve, reject) => {
+        deviceId = deviceId || configuration.config.deviceId
+        const token = await getToken()
+        const options = {
+            url: configuration.constants.baseUrl + configuration.constants.stateUrlFront + deviceId + configuration.constants.lightStateUrlEnd,
+            headers: setHeader({ SecurityToken: token }),
+            gzip: true
+        }
+
+        callMyQDevice(options, 'get').then(state => {
+            const lightState = JSON.parse(state)
+            const lightStatus = configuration.constants.lightState[Number(lightState.AttributeValue)]
+            resolve(lightStatus)
+        }).catch(error => reject(error))
+    })
+}
+
+const setLightState = () => {
+
+}
+
+
 exports.setCredentials = setCredentials
 exports.getDevices = getDevices
-exports.getState = getState
+exports.getDoorState = getDoorState
 exports.openDoor = openDoor
 exports.closeDoor = closeDoor
+exports.getLightState = getLightState
+exports.setLightState = setLightState
