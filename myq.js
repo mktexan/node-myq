@@ -150,7 +150,9 @@ const getLightState = () => {
 }
 
 const setLightState = () => {
-
+    return new Promise(async (resolve, reject) => {
+        resolve('not available')
+    })
 }
 
 
