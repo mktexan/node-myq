@@ -20,7 +20,8 @@ const setHeader = (token) => {
 const autoSetSingleGarageDevice = async () => {
     const device = await getDevices()
     device.Devices.forEach(element => {
-        if (element.MyQDeviceTypeId === 7) configuration.config.deviceId = element.MyQDeviceId
+        let id = element.MyQDeviceTypeId
+        if (id === 7 || id === 17 || id === 5) configuration.config.deviceId = element.MyQDeviceId
     })
 }
 
@@ -82,10 +83,8 @@ const getState = async (deviceId) => {
         }
 
         callMyQDevice(options, 'get').then(state => {
-            const parsed = JSON.parse(state)
-            let doorStatus
-            if (Number(parsed.AttributeValue) === 2) doorStatus = configuration.constants.closed
-            else doorStatus = configuration.constants.opened
+            const deviceState = JSON.parse(state)
+            const doorStatus = configuration.constants.doorStates[Number(deviceState.AttributeValue)]
             resolve(doorStatus)
         }).catch(error => reject(error))
     })

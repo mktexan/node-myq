@@ -14,6 +14,22 @@ let constants = {
         5: 'going down',
         9: 'not closed'
     },
+    lightState: {
+        0: 'off',
+        1: 'on'
+    },
+    deviceTypes: {
+        1: 'Gateway',
+        2: 'GDO',
+        3: 'Light',
+        5: 'Gate',
+        7: 'VGDO Garage Door',
+        9: 'Commercial Door Operator (CDO)',
+        13: 'Camera',
+        15: 'WGDO Gateway AC',
+        16: 'WGDO Gateway DC',
+        17: 'WGDO Garage Door'
+    },
     deviceTypes: {
         7: 'garageDoor'
     },
@@ -32,8 +48,6 @@ let constants = {
     devicesUrl: 'UserDeviceDetails/Get?filterOn=true',
     changeDeviceStateUrl: 'DeviceAttribute/PutDeviceAttribute',
     validateUrl: 'User/Validate',
-    closed: 'closed',
-    opened: 'opened'
 }
 
 let token = ''

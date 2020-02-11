@@ -9,19 +9,14 @@ A module for the Chamberlain - MyQ Smart Garage Hub
 ```javascript
 const myQ = require('node-myq')
 
-// Available options. Only use one of these options at a time as 
-// auto set gets the device ID automatically
-let options = { autoSetGarageDoorDevice: true, deviceId: 213213}
+// Available options
+// Chose one or the other as autoSetGarageDoorDevice will automatically set your deviceId
+let options = { autoSetGarageDoorDevice: true }
+let options = { deviceId: 213213 }
 
-// If you have a single garage door device, you can pass 
-// autoSetGarageDoorDevice : true to automatically add your garage 
-// device by its id
-myQ.setCredentials('email@example.com', 'password', { autoSetGarageDoorDevice: true})
+myQ.setCredentials('email@example.com', 'password', options)
 
-// If you do not wish to automatically add your device, pass the device id
-myQ.setCredentials('email@example.com', 'password', { deviceId: 213213})
-
-// Use this method if you wish to manually set your device id or if you have more than one device
+// Use this method if you wish to get your deviceId's
 myQ.getDevices().then(devices => {
  //returns array of devices
 }).catch(error => {})
@@ -47,7 +42,7 @@ Promise, gets devices connected to your myQ account.
 
 ## getState()
 
-Promise resolves door state of "opened" or "closed"
+Promise resolves a string of Door State
 
 ## openDoor()
 
@@ -56,3 +51,21 @@ Promis resolves on success of call
 ## closeDoor()
 
 Promise resolves on success of call
+
+
+## Return Values
+
+| Door State | Description           |
+|------------|-----------------------|
+| 1          | open                  |
+| 2          | closed                |
+| 3          | stopped in the middle |
+| 4          | going up              |
+| 5          | going down            |
+| 9          | not closed            |
+
+
+| Light State   | Description |
+|---------------|-------------|
+| 0             | off         |
+| 1             | on          |
