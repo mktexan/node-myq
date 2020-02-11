@@ -149,7 +149,7 @@ const getLightState = () => {
     })
 }
 
-const setLightState = () => {
+const setLightState = (state) => {
     return new Promise(async (resolve, reject) => {
         resolve('not available')
     })

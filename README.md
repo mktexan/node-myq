@@ -33,12 +33,12 @@ myQ.closeDoor().then(door => {
   // Promise resolves on success
 }).catch(error => {})
 
-myQ.getLightState().then(door => {
-  // Promise resolves on success
+myQ.getLightState().then(state => {
+  // UNDER CONSTRUCTION
 }).catch(error => {})
 
-myQ.setLightState().then(door => {
-  // Promise resolves on success
+myQ.setLightState().then(state => {
+  // UNDER CONSTRUCTION
 }).catch(error => {})
 ```
 

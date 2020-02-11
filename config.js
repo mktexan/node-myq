@@ -30,9 +30,6 @@ let constants = {
         16: 'WGDO Gateway DC',
         17: 'WGDO Garage Door'
     },
-    deviceTypes: {
-        7: 'garageDoor'
-    },
     base: {
         Culture: 'en',
         BrandId: 2,
