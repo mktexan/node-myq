@@ -10,6 +10,7 @@ const setCredentials = (user, password, options) => {
 
     if (options.deviceId) configuration.config.deviceId = options.deviceId
     if (options && options.autoSetGarageDoorDevice) autoSetSingleGarageDevice()
+    if (options && options.autoSetMultipleGarageDoorDevices) autoSetMultipleGarageDoorDevices()
 }
 
 const setHeader = (token) => {
@@ -17,44 +18,15 @@ const setHeader = (token) => {
     else return configuration.constants.base
 }
 
-const detectWhenDoorIsClosed = async () => {
-    return new Promise(async (resolve, reject) => {
-        let stop = false
-        let timeStamp = new Date()
-        let thirtySeconds = 1 * 30 * 1000
+const autoSetMultipleGarageDoorDevices = async () => {
+    const device = await getDevices()
 
-        while (!stop) {
-            await pause()
-            let doorState = await getDoorState()
-            let tickTimestamp = new Date()
-            if (doorState != configuration.constants.doorStates[2] && timeStamp - tickTimestamp < thirtySeconds) continue
-            if (timeStamp - tickTimestamp > thirtySeconds) reject()
-            stop = true
-            resolve()
-        }
+    configuration.config.multipleDevices = true
+
+    device.Devices.forEach(element => {
+        let id = element.MyQDeviceTypeId
+        if (id === 7 || id === 17 || id === 5) addDeviceToList(element)
     })
-}
-
-const detectWhenDoorIsOpen = async () => {
-    return new Promise(async (resolve, reject) => {
-        let stop = false
-        let timeStamp = new Date()
-        let thirtySeconds = 1 * 30 * 1000
-
-        while (!stop) {
-            await pause()
-            let doorState = await getDoorState()
-            let tickTimestamp = new Date()
-            if (doorState != configuration.constants.doorStates[9] && timeStamp - tickTimestamp < thirtySeconds) continue
-            if (timeStamp - tickTimestamp > thirtySeconds) reject()
-            stop = true
-            resolve()
-        }
-    })
-}
-
-const pause = () => {
-    return new Promise(resolve => setTimeout(() => { resolve() }, 2000))
 }
 
 const autoSetSingleGarageDevice = async () => {
@@ -65,7 +37,17 @@ const autoSetSingleGarageDevice = async () => {
     })
 }
 
-const callMyQDevice = async (options, type, url) => {
+const addDeviceToList = (element) => {
+    let deviceList = {}
+
+    deviceList.MyQDeviceId = element.MyQDeviceId
+    deviceList.MyQDeviceTypeId = element.MyQDeviceTypeId
+    deviceList.MyQDeviceTypeName = element.MyQDeviceTypeName
+
+    configuration.devices.push(deviceList)
+}
+
+const callMyQDevice = async (options, type) => {
     return new Promise(async (resolve, reject) => {
         request[type](options, (error, ret, body) => {
             if (!error && ret.statusCode === 200) return resolve(body)
@@ -214,13 +196,60 @@ const getLightState = async () => {
     }).catch(error => reject(error))
 }
 
-const setLightState = (state) => {
+const setLightState = async (state) => {
     return new Promise(async (resolve, reject) => {
         reject('not available')
-    })
+    }).catch(error => reject(error))
 }
 
+const detectWhenDoorIsClosed = async (deviceId) => {
+    return new Promise(async (resolve, reject) => {
+        let stop = false
+        let timeStamp = new Date()
+        let thirtySeconds = 1 * 30 * 1000
 
+        while (!stop) {
+            await pause()
+            let doorState = await getDoorState(deviceId)
+            let tickTimestamp = new Date()
+            if (doorState != configuration.constants.doorStates[2] && timeStamp - tickTimestamp < thirtySeconds) continue
+            if (timeStamp - tickTimestamp > thirtySeconds) reject()
+            stop = true
+            resolve()
+        }
+    }).catch(error => reject(error))
+}
+
+const detectWhenDoorIsOpen = async (deviceId) => {
+    return new Promise(async (resolve, reject) => {
+        let stop = false
+        let timeStamp = new Date()
+        let thirtySeconds = 1 * 30 * 1000
+
+        while (!stop) {
+            await pause()
+            let doorState = await getDoorState(deviceId)
+            let tickTimestamp = new Date()
+            if (doorState != configuration.constants.doorStates[9] && timeStamp - tickTimestamp < thirtySeconds) continue
+            if (timeStamp - tickTimestamp > thirtySeconds) reject()
+            stop = true
+            resolve()
+        }
+    }).catch(error => reject(error))
+}
+
+const getAutoAddedDevices = () => {
+    return new Promise(async (resolve, reject) => {
+        const list = configuration.devices
+        resolve(list)
+    }).catch(error => reject(error))
+}
+
+const pause = async () => {
+    return new Promise(resolve => setTimeout(() => { resolve() }, 2000)).catch(error => reject(error))
+}
+
+exports.getAutoAddedDevices = getAutoAddedDevices
 exports.setCredentials = setCredentials
 exports.detectWhenDoorIsClosed = detectWhenDoorIsClosed
 exports.detectWhenDoorIsOpen = detectWhenDoorIsOpen

@@ -4,43 +4,34 @@ A module for the Chamberlain - MyQ Smart Garage Hub
 
 `npm i --save node-myq`
 
-# Usage
+# Usage Example
 
 ```javascript
-const myQ = require('node-myq')
+const node_myQ = require('node-myq')
 
-// Available options
-// Chose one or the other as autoSetGarageDoorDevice will automatically set your deviceId
-let options = { autoSetGarageDoorDevice: true }
-let options = { deviceId: 213213 }
+let options = {
+    autoSetGarageDoorDevice: true, // use for automatically adding a SINGLE DEVICE
+    autoSetMultipleGarageDoorDevices: false, // automatically adds ALL DETECTED DOORS to the API. 
+    deviceId: 213213 // Use this to manually set your own single deviceId
+}
 
-myQ.setCredentials('email@example.com', 'password', options)
+node_myQ.setCredentials('email@example.com', 'password', options)
 
 
-myQ.getDevices().then(devices => {
- //returns array of devices
+node_myQ.getDevices().then(devices => {
+ //returns array of devices detected on the network
 }).catch(error => {})
 
-myQ.getDoorState().then(state => {
+node_myQ.getDoorState().then(state => {
   //Returns a string of door state. See constants
 }).catch(error => {})
 
-myQ.openDoor().then(_ => {
+node_myQ.openDoor().then(_ => {
   // Promise resolves on success
 }).catch(error => {})
 
-myQ.closeDoor().then(_ => {
+node_myQ.closeDoor().then(_ => {
   // Promise resolves on success
-}).catch(error => {})
-
-myQ.detectWhenDoorIsOpen().then(_ => {
-  // Resolves when door opens. Use this method once the door starts opening. 
-  // Rejects after 30 seconds and if the door is still closed
-}).catch(error => {})
-
-myQ.detectWhenDoorIsClosed().then(_ => {
-  // Resolves when door closes. Use this method once the door starts closing. 
-  // Rejects after 30 seconds and if the door is still opened
 }).catch(error => {})
 ```
 
@@ -49,29 +40,40 @@ myQ.detectWhenDoorIsClosed().then(_ => {
 
 ## getDevices()
 
-Promise, gets devices connected to your myQ account.
+A promise that returns an array of devices detected on the network
 
-## getDoorState()
+## getDoorState(deviceId)
 
-Promise resolves a string of Door State
+Promise resolves a string of door state on success of the call. Reference the constants below to see the door state output.
+deviceId is optional. Use it if you have multiple devices in your network and wish to call a specific device. 
+If deviceId is not provided, the API will default to the single deviceId that you set using autoSetGarageDoorDevice: true or deviceId: yourDeviceId.
 
-## openDoor()
+## openDoor(deviceId)
 
-Promis resolves on success of call
+Promise resolves on success of call. deviceId is optional. Use it if you have multiple devices in your network and wish to call a specific device. 
+If deviceId is not provided, the API will default to the single deviceId that you set using autoSetGarageDoorDevice: true or deviceId: yourDeviceId.
 
-## closeDoor()
+## closeDoor(deviceId)
 
 Promise resolves on success of call
 
-## detectWhenDoorIsClosed()
+## detectWhenDoorIsClosed(deviceId)
 
 Resolves when door closes. Use this method once the door starts closing. 
-Rejects after 30 seconds and if the door is still opened
+Rejects after 30 seconds and if the door is still opened.
+deviceId is optional. Use it if you have multiple devices in your network and wish to call a specific device. 
+If deviceId is not provided, the API will default to the single deviceId that you set using autoSetGarageDoorDevice: true or deviceId: yourDeviceId.
 
-## detectWhenDoorIsOpen()
+## detectWhenDoorIsOpen(deviceId)
 
-Resolves when door opens. Use this method once the door starts opening. 
-Rejects after 30 seconds and if the door is still closed
+Resolves when door opens. Use this method once the door starts opening.
+deviceId is optional. Use it if you have multiple devices in your network and wish to call a specific device. 
+If deviceId is not provided, the API will default to the single deviceId that you set using autoSetGarageDoorDevice: true or deviceId: yourDeviceId.
+Rejects after 30 seconds and if the door is still closed.
+
+## getAutoAddedDevices(deviceId)
+
+Returns an array of door or garage door devices that were automatically added to the API using autoSetMultipleGarageDoorDevices: true
 
 
 ## Return Values
@@ -84,9 +86,3 @@ Rejects after 30 seconds and if the door is still closed
 | 4          | going up              |
 | 5          | going down            |
 | 9          | opened                |
-
-
-| Light State   | Description |
-|---------------|-------------|
-| 0             | off         |
-| 1             | on          |
