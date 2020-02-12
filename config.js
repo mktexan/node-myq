@@ -7,7 +7,7 @@ let constants = {
         open: 1
     },
     doorStates: {
-        1: 'open',
+        1: 'NA',
         2: 'closed',
         3: 'stopped in the middle',
         4: 'going up',

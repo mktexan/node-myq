@@ -35,20 +35,12 @@ myQ.closeDoor().then(_ => {
 
 myQ.detectWhenDoorIsOpen().then(_ => {
   // Resolves when door opens. Use this method once the door starts opening. 
-  // Rejects after 30 seconds and door is still closed
+  // Rejects after 30 seconds and if the door is still closed
 }).catch(error => {})
 
 myQ.detectWhenDoorIsClosed().then(_ => {
   // Resolves when door closes. Use this method once the door starts closing. 
-  // Rejects after 30 second timeout and door is still open
-}).catch(error => {})
-
-myQ.getLightState().then(state => {
-  // UNDER CONSTRUCTION
-}).catch(error => {})
-
-myQ.setLightState().then(state => {
-  // UNDER CONSTRUCTION
+  // Rejects after 30 seconds and if the door is still opened
 }).catch(error => {})
 ```
 
@@ -81,27 +73,17 @@ Rejects after 30 second timeout and door is still open
 Resolves when door closes. Use this method once the door starts closing. 
 Rejects after 30 second timeout and door is still open
 
-## setLightState()
-
-NOT CURRENTLY AVAILABLE
-
-## getLightState()
-
-NOT CURRENTLY AVAILABLE
-
-
-
 
 ## Return Values
 
 | Door State | Description           |
 |------------|-----------------------|
-| 1          | open                  |
+| 1          | NA                    |
 | 2          | closed                |
 | 3          | stopped in the middle |
 | 4          | going up              |
 | 5          | going down            |
-| 9          | not closed            |
+| 9          | opened                |
 
 
 | Light State   | Description |
