@@ -17,7 +17,6 @@ let options = {
 
 node_myQ.setCredentials('email@example.com', 'password', options)
 
-
 node_myQ.getDevices().then(devices => {
  //returns array of devices detected on the network
 }).catch(error => {})
