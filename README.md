@@ -16,13 +16,13 @@ let options = { deviceId: 213213 }
 
 myQ.setCredentials('email@example.com', 'password', options)
 
-// Use this method if you wish to get your deviceId's
+
 myQ.getDevices().then(devices => {
  //returns array of devices
 }).catch(error => {})
 
 myQ.getDoorState().then(state => {
-  //Returns a string of opened or closed
+  //Returns a string of door state. See constants
 }).catch(error => {})
 
 myQ.openDoor().then(_ => {
@@ -33,6 +33,16 @@ myQ.closeDoor().then(_ => {
   // Promise resolves on success
 }).catch(error => {})
 
+myQ.detectWhenDoorIsOpen().then(_ => {
+  // Resolves when door opens. Use this method once the door starts opening. 
+  // Rejects after 30 seconds and door is still closed
+}).catch(error => {})
+
+myQ.detectWhenDoorIsClosed().then(_ => {
+  // Resolves when door closes. Use this method once the door starts closing. 
+  // Rejects after 30 second timeout and door is still open
+}).catch(error => {})
+
 myQ.getLightState().then(state => {
   // UNDER CONSTRUCTION
 }).catch(error => {})
@@ -41,6 +51,7 @@ myQ.setLightState().then(state => {
   // UNDER CONSTRUCTION
 }).catch(error => {})
 ```
+
 
 # Methods
 

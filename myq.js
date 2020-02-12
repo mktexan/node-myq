@@ -17,6 +17,46 @@ const setHeader = (token) => {
     else return configuration.constants.base
 }
 
+const detectWhenDoorIsClosed = async () => {
+    return new Promise(async (resolve, reject) => {
+        let stop = false
+        let timeStamp = new Date()
+        let thirtySeconds = 1 * 30 * 1000
+
+        while (!stop) {
+            await pause()
+            let doorState = await getDoorState()
+            let tickTimestamp = new Date()
+            if (doorState != configuration.constants.doorStates[2] && timeStamp - tickTimestamp < thirtySeconds) continue
+            if (timeStamp - tickTimestamp > thirtySeconds) reject()
+            stop = true
+            resolve()
+        }
+    })
+}
+
+const detectWhenDoorIsOpen = async () => {
+    return new Promise(async (resolve, reject) => {
+        let stop = false
+        let timeStamp = new Date()
+        let thirtySeconds = 1 * 30 * 1000
+
+        while (!stop) {
+            await pause()
+            let doorState = await getDoorState()
+            let tickTimestamp = new Date()
+            if (doorState != configuration.constants.doorStates[9] && timeStamp - tickTimestamp < thirtySeconds) continue
+            if (timeStamp - tickTimestamp > thirtySeconds) reject()
+            stop = true
+            resolve()
+        }
+    })
+}
+
+const pause = () => {
+    return new Promise(resolve => setTimeout(() => { resolve() }, 2000))
+}
+
 const autoSetSingleGarageDevice = async () => {
     const device = await getDevices()
     device.Devices.forEach(element => {
@@ -29,7 +69,7 @@ const callMyQDevice = async (options, type, url) => {
     return new Promise(async (resolve, reject) => {
         request[type](options, (error, ret, body) => {
             if (!error && ret.statusCode === 200) return resolve(body)
-            if (ret.statusCode != 200) reject(JSON.stringify({ resCode: ret.statusCode, body: body }))
+            if (ret.statusCode != 200) reject(JSON.stringify())
             else reject(error)
         })
     })
@@ -182,6 +222,8 @@ const setLightState = (state) => {
 
 
 exports.setCredentials = setCredentials
+exports.detectWhenDoorIsClosed = detectWhenDoorIsClosed
+exports.detectWhenDoorIsOpen = detectWhenDoorIsOpen
 exports.getDevices = getDevices
 exports.getDoorState = getDoorState
 exports.openDoor = openDoor

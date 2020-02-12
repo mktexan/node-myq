@@ -12,7 +12,7 @@ let constants = {
         3: 'stopped in the middle',
         4: 'going up',
         5: 'going down',
-        9: 'not closed'
+        9: 'opened'
     },
     lightState: {
         0: 'off',
