@@ -177,8 +177,11 @@ const changeDeviceState = async (change, deviceId) => {
 const getLightState = async () => {
     return new Promise(async (resolve, reject) => {
         reject('not available')
+        
         deviceId = deviceId || configuration.config.deviceId
+
         const token = await getToken()
+
         const options = {
             url: configuration.constants.baseUrl + configuration.constants.stateUrlFront + deviceId + configuration.constants.lightStateUrlEnd,
             headers: setHeader({ SecurityToken: token }),
