@@ -25,8 +25,8 @@ const autoSetSingleGarageDevice = async () => {
     })
 }
 
-const callMyQDevice = (options, type, url) => {
-    return new Promise((resolve, reject) => {
+const callMyQDevice = async (options, type, url) => {
+    return new Promise(async (resolve, reject) => {
         request[type](options, (error, ret, body) => {
             if (!error && ret.statusCode === 200) return resolve(body)
             if (ret.statusCode != 200) reject(JSON.stringify({ resCode: ret.statusCode, body: body }))
@@ -36,7 +36,7 @@ const callMyQDevice = (options, type, url) => {
 }
 
 const getToken = async () => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         const options = {
             url: configuration.constants.baseUrl + configuration.constants.validateUrl,
             headers: setHeader(),
@@ -47,72 +47,92 @@ const getToken = async () => {
             },
             json: true
         }
-        callMyQDevice(options, 'post').then(code => {
-            if (code.SecurityToken === undefined) reject(code.ErrorMessage)
-            configuration.token = code.SecurityToken
-            resolve(code.SecurityToken)
-        }).catch(error => reject(error))
-    })
+
+        let data = await callMyQDevice(options, 'post')
+
+        if (data.SecurityToken === undefined) reject(data.ErrorMessage)
+
+        configuration.token = data.SecurityToken
+
+        resolve(data.SecurityToken)
+
+    }).catch(error => reject(error))
 }
 
 const getDevices = async () => {
     return new Promise(async (resolve, reject) => {
         const token = await getToken()
+
         const options = {
             url: configuration.constants.baseUrl + configuration.constants.devicesUrl,
             headers: setHeader({ SecurityToken: token }),
             gzip: true
         }
 
-        callMyQDevice(options, 'get').then(devices => {
-            const deviceList = JSON.parse(devices)
-            if (deviceList.ErrorMessage != '') reject(deviceList.ErrorMessage)
-            resolve(deviceList)
-        }).catch(error => reject(error))
+        let data = await callMyQDevice(options, 'get')
+
+        const deviceList = JSON.parse(data)
+
+        if (deviceList.ErrorMessage != '') reject(deviceList.ErrorMessage)
+
+        resolve(deviceList)
+
     }).catch(error => reject(error))
 }
 
 const getDoorState = async (deviceId) => {
     return new Promise(async (resolve, reject) => {
         deviceId = deviceId || configuration.config.deviceId
+
         const token = await getToken()
+
         const options = {
             url: configuration.constants.baseUrl + configuration.constants.stateUrlFront + deviceId + configuration.constants.doorStateUrlEnd,
             headers: setHeader({ SecurityToken: token }),
             gzip: true
         }
 
-        callMyQDevice(options, 'get').then(state => {
-            const deviceState = JSON.parse(state)
-            const doorStatus = configuration.constants.doorStates[Number(deviceState.AttributeValue)]
-            resolve(doorStatus)
-        }).catch(error => reject(error))
-    })
+        let data = await callMyQDevice(options, 'get')
+
+        const deviceState = JSON.parse(data)
+
+        const doorStatus = configuration.constants.doorStates[Number(deviceState.AttributeValue)]
+
+        resolve(doorStatus)
+
+    }).catch(error => reject(error))
 }
 
 const openDoor = (deviceId) => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         deviceId = deviceId || configuration.config.deviceId
-        changeDeviceState('open', deviceId).then(state => {
-            if (state.ErrorMessage != '') reject(state.ErrorMessage)
-            else resolve()
-        }).catch(error => reject(error))
-    })
+
+        let data = await changeDeviceState('open', deviceId)
+
+        if (data.ErrorMessage != '') reject(data.ErrorMessage)
+
+        resolve()
+
+    }).catch(error => reject(error))
 }
 
 const closeDoor = (deviceId) => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         deviceId = deviceId || configuration.config.deviceId
-        changeDeviceState('close', deviceId).then(state => {
-            if (state.ErrorMessage) reject(parsed.ErrorMessage)
-            else resolve()
-        }).catch(error => reject(error))
-    })
+
+        let data = await changeDeviceState('close', deviceId)
+
+        if (data.ErrorMessage) reject(data.ErrorMessage)
+
+        resolve()
+
+    }).catch(error => reject(error))
 }
 
 const changeDeviceState = async (change, deviceId) => {
     return new Promise(async (resolve, reject) => {
         const token = await getToken()
+
         const options = {
             url: configuration.constants.baseUrl + configuration.constants.changeDeviceStateUrl,
             headers: setHeader({ SecurityToken: token }),
@@ -125,14 +145,16 @@ const changeDeviceState = async (change, deviceId) => {
             gzip: true
         }
 
-        callMyQDevice(options, 'put').then(state => {
-            resolve(state)
-        }).catch(error => reject(error))
-    })
+        let data = await callMyQDevice(options, 'put')
+
+        resolve(data)
+
+    }).catch(error => reject(error))
 }
 
 const getLightState = () => {
     return new Promise(async (resolve, reject) => {
+        reject('not available')
         deviceId = deviceId || configuration.config.deviceId
         const token = await getToken()
         const options = {
@@ -141,17 +163,20 @@ const getLightState = () => {
             gzip: true
         }
 
-        callMyQDevice(options, 'get').then(state => {
-            const lightState = JSON.parse(state)
-            const lightStatus = configuration.constants.lightState[Number(lightState.AttributeValue)]
-            resolve(lightStatus)
-        }).catch(error => reject(error))
-    })
+        let data = await callMyQDevice(options, 'get')
+
+        const lightState = JSON.parse(data)
+
+        const lightStatus = configuration.constants.lightState[Number(lightState.AttributeValue)]
+
+        resolve(lightStatus)
+
+    }).catch(error => reject(error))
 }
 
 const setLightState = (state) => {
     return new Promise(async (resolve, reject) => {
-        resolve('not available')
+        reject('not available')
     })
 }
 

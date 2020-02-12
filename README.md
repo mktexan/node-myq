@@ -25,11 +25,11 @@ myQ.getDoorState().then(state => {
   //Returns a string of opened or closed
 }).catch(error => {})
 
-myQ.openDoor().then(door => {
+myQ.openDoor().then(_ => {
   // Promise resolves on success
 }).catch(error => {})
 
-myQ.closeDoor().then(door => {
+myQ.closeDoor().then(_ => {
   // Promise resolves on success
 }).catch(error => {})
 
@@ -62,11 +62,11 @@ Promise resolves on success of call
 
 ## setLightState()
 
-Promise resolves on success of call
+NOT CURRENTLY AVAILABLE
 
 ## getLightState()
 
-Promise resolves on success of call
+NOT CURRENTLY AVAILABLE
 
 
 
