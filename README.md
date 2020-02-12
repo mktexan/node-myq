@@ -71,6 +71,16 @@ Promis resolves on success of call
 
 Promise resolves on success of call
 
+## detectWhenDoorIsClosed()
+
+Resolves when door closes. Use this method once the door starts closing. 
+Rejects after 30 second timeout and door is still open
+
+## detectWhenDoorIsOpen()
+
+Resolves when door closes. Use this method once the door starts closing. 
+Rejects after 30 second timeout and door is still open
+
 ## setLightState()
 
 NOT CURRENTLY AVAILABLE
@@ -78,6 +88,7 @@ NOT CURRENTLY AVAILABLE
 ## getLightState()
 
 NOT CURRENTLY AVAILABLE
+
 
 
 
