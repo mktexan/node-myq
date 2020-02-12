@@ -66,12 +66,12 @@ Promise resolves on success of call
 ## detectWhenDoorIsClosed()
 
 Resolves when door closes. Use this method once the door starts closing. 
-Rejects after 30 second timeout and door is still open
+Rejects after 30 seconds and if the door is still opened
 
 ## detectWhenDoorIsOpen()
 
-Resolves when door closes. Use this method once the door starts closing. 
-Rejects after 30 second timeout and door is still open
+Resolves when door opens. Use this method once the door starts opening. 
+Rejects after 30 seconds and if the door is still closed
 
 
 ## Return Values
