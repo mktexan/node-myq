@@ -143,7 +143,7 @@ const getDoorState = async (deviceId) => {
     }).catch(error => reject(error))
 }
 
-const openDoor = (deviceId) => {
+const openDoor = async (deviceId) => {
     return new Promise(async (resolve, reject) => {
         deviceId = deviceId || configuration.config.deviceId
 
@@ -156,7 +156,7 @@ const openDoor = (deviceId) => {
     }).catch(error => reject(error))
 }
 
-const closeDoor = (deviceId) => {
+const closeDoor = async (deviceId) => {
     return new Promise(async (resolve, reject) => {
         deviceId = deviceId || configuration.config.deviceId
 
@@ -192,7 +192,7 @@ const changeDeviceState = async (change, deviceId) => {
     }).catch(error => reject(error))
 }
 
-const getLightState = () => {
+const getLightState = async () => {
     return new Promise(async (resolve, reject) => {
         reject('not available')
         deviceId = deviceId || configuration.config.deviceId
