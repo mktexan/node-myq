@@ -36,6 +36,11 @@ let constants = {
         MyQApplicationId: 'OA9I/hgmPHFp9RYKJqCKfwnhh28uqLJzZ9KOJf1DXoo8N2XAaVX6A1wcLYyWsnnv',
         ApiVersion: 4.1
     },
+    deprecatedBase: {
+        Culture: 'en',
+        MyQApplicationId: 'Vj8pQggXLhLy0WHahglCD4N1nAkkXQtGYpq2HrHD7H1nvmbT55KqtN6RSF4ILB/i',
+    },
+    deprecatedUrl:'https://myqexternal.myqdevice.com/',
     emailError: 'Enter an email address',
     passwordError: 'Enter a password',
     deviceSetError: 'Unable to auto set MyQ device',

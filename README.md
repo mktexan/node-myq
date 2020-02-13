@@ -26,6 +26,7 @@ A promise that returns an array of devices detected on the network
 
 ``` javascript
 //returns array of devices detected on the network
+
 node_myQ.getDevices().then(deviceList => {
     console.log(deviceList)
 }).catch(error => {})
@@ -45,6 +46,7 @@ If deviceId is not provided, the API will default to the single deviceId that yo
 let deviceId = 212121 
 
 //deviceId is an optional overload
+
 node_myQ.getDoorState(deviceId).then(doorState => {
     console.log(doorState)
     //Returns a string of door state. See Return Values at the bottom of the page.
@@ -64,6 +66,7 @@ If deviceId is not provided, the API will default to the single deviceId that yo
 let deviceId = 212121 
 
 //deviceId is an optional overload
+
 node_myQ.openDoor(devideId).then(_ => {
     // Promise resolves on success
 }).catch(error => {})
@@ -82,6 +85,7 @@ If deviceId is not provided, the API will default to the single deviceId that yo
 let deviceId = 212121 
 
 //deviceId is an optional overload
+
 node_myQ.closeDoor(deviceId).then(_ => {
     // Promise resolves on success
 }).catch(error => {})
@@ -102,6 +106,7 @@ If deviceId is not provided, the API will default to the single deviceId that yo
 let deviceId = 212121 
 
 //deviceId is an optional overload
+
 node_myQ.detectWhenDoorIsClosed(deviceId).then(_ => {
     console.log('door is now closed!')
     // Promise resolves on success
@@ -125,6 +130,7 @@ Rejects after 30 seconds and if the door is still closed.
 let deviceId = 212121 
 
 // deviceId is an optional overload
+
 node_myQ.detectWhenDoorIsOpen(deviceId).then(_ => {
     console.log('door is now opened!')
     // Promise resolves on success

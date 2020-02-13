@@ -12,7 +12,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 
-const request = require('request')
+const bent = require('bent')
 const configuration = require('./config')
 
 const setCredentials = (user, password, options) => {
@@ -23,6 +23,7 @@ const setCredentials = (user, password, options) => {
     configuration.config.password = password
 
     if (options.deviceId) configuration.config.deviceId = options.deviceId
+
     if (options && options.autoSetGarageDoorDevice) autoSetSingleGarageDevice()
     if (options && options.autoSetMultipleGarageDoorDevices) autoSetMultipleGarageDoorDevices()
 }
@@ -63,11 +64,9 @@ const addDeviceToList = (element) => {
 
 const callMyQDevice = async (options, type) => {
     return new Promise(async (resolve, reject) => {
-        request[type](options, (error, ret, body) => {
-            if (!error && ret.statusCode === 200) return resolve(body)
-            if (ret.statusCode != 200) reject(JSON.stringify())
-            else reject(error)
-        })
+        const deviceCall = bent(type, 'json')
+        const response = await deviceCall(options.url, options.body, options.headers)
+        resolve(response)
     })
 }
 
@@ -84,7 +83,7 @@ const getToken = async () => {
             json: true
         }
 
-        let data = await callMyQDevice(options, 'post')
+        let data = await callMyQDevice(options, 'POST')
 
         if (data.SecurityToken === undefined) reject(data.ErrorMessage)
 
@@ -105,9 +104,7 @@ const getDevices = async () => {
             gzip: true
         }
 
-        let data = await callMyQDevice(options, 'get')
-
-        const deviceList = JSON.parse(data)
+        const deviceList = await callMyQDevice(options, 'GET')
 
         if (deviceList.ErrorMessage != '') reject(deviceList.ErrorMessage)
 
@@ -128,9 +125,7 @@ const getDoorState = async (deviceId) => {
             gzip: true
         }
 
-        let data = await callMyQDevice(options, 'get')
-
-        const deviceState = JSON.parse(data)
+        const deviceState = await callMyQDevice(options, 'GET')
 
         const doorStatus = configuration.constants.doorStates[Number(deviceState.AttributeValue)]
 
@@ -181,7 +176,7 @@ const changeDeviceState = async (change, deviceId) => {
             gzip: true
         }
 
-        let data = await callMyQDevice(options, 'put')
+        let data = await callMyQDevice(options, 'PUT')
 
         resolve(data)
 
@@ -202,9 +197,7 @@ const getLightState = async () => {
             gzip: true
         }
 
-        let data = await callMyQDevice(options, 'get')
-
-        const lightState = JSON.parse(data)
+        const lightState = await callMyQDevice(options, 'GET')
 
         const lightStatus = configuration.constants.lightState[Number(lightState.AttributeValue)]
 
@@ -260,6 +253,12 @@ const getAutoAddedDevices = () => {
         const list = configuration.devices
         resolve(list)
     }).catch(error => reject(error))
+}
+
+const checkApiVersion = async () => {
+    const apiV4 = await getDevices()
+
+    if (apiV4) return
 }
 
 const pause = async () => {
