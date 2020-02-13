@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Cole Stasney",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "homepage": "https://github.com/mktexan/node-myq",
   "dependencies": {
     "request": "^2.88.0"
