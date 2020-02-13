@@ -57,7 +57,7 @@ const doorState = await node_myQ.getDoorState()
 
 ## openDoor(deviceId)
 
-Promise resolves on success of call.deviceId is optional. Use it if you have multiple devices in your network and wish to call a specific device.
+Promise resolves on success of call. deviceId is optional. Use it if you have multiple devices in your network and wish to call a specific device.
 If deviceId is not provided, the API will default to the single deviceId that you set using autoSetGarageDoorDevice: true or deviceId: yourDeviceId.
 
 ``` javascript
@@ -75,7 +75,7 @@ await node_myQ.openDoor()
 
 ## closeDoor(deviceId)
 
-Promise resolves on success of call.deviceId is optional. Use it if you have multiple devices in your network and wish to call a specific device.
+Promise resolves on success of call. deviceId is optional. Use it if you have multiple devices in your network and wish to call a specific device.
 If deviceId is not provided, the API will default to the single deviceId that you set using autoSetGarageDoorDevice: true or deviceId: yourDeviceId.
 
 ``` javascript
