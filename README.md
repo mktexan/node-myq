@@ -103,7 +103,7 @@ let deviceId = 212121
 
 //deviceId is an optional overload
 node_myQ.detectWhenDoorIsClosed(deviceId).then(_ => {
-    console.log('door is now closed!)
+    console.log('door is now closed!')
     // Promise resolves on success
 }).catch(error => {})
 
@@ -111,7 +111,7 @@ node_myQ.detectWhenDoorIsClosed(deviceId).then(_ => {
 
 await node_myQ.detectWhenDoorIsClosed()
 
-console.log('yay, door is closed!)
+console.log('yay, door is closed!')
 ```
 
 ## detectWhenDoorIsOpen(deviceId)
@@ -126,7 +126,7 @@ let deviceId = 212121
 
 // deviceId is an optional overload
 node_myQ.detectWhenDoorIsOpen(deviceId).then(_ => {
-    console.log('door is now opened!)
+    console.log('door is now opened!')
     // Promise resolves on success
 }).catch(error => {})
 
@@ -134,7 +134,7 @@ node_myQ.detectWhenDoorIsOpen(deviceId).then(_ => {
 
 await node_myQ.detectWhenDoorIsOpen()
 
-console.log('yay, door is open!)
+console.log('yay, door is open!')
 ```
 
 ## getAutoAddedDevices()
