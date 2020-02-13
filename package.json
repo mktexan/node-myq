@@ -1,6 +1,6 @@
 {
   "name": "node-myq",
-  "version": "6.0.0",
+  "version": "6.1.0",
   "description": "MyQ device controller",
   "main": "index.js",
   "scripts": {
