@@ -248,8 +248,8 @@ const detectWhenDoorIsOpen = async (deviceId) => {
     }).catch(error => reject(error))
 }
 
-const getAutoAddedDevices = () => {
-    return new Promise(async (resolve, reject) => {
+const getAutoAddedDevices = async () => {
+    return new Promise((resolve, reject) => {
         const list = configuration.devices
         resolve(list)
     }).catch(error => reject(error))
