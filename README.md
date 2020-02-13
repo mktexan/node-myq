@@ -25,9 +25,14 @@ node_myQ.setCredentials('email@example.com', 'password', options)
 A promise that returns an array of devices detected on the network
 
 ``` javascript
-node_myQ.getDevices().then(devices => {
-    //returns array of devices detected on the network
+//returns array of devices detected on the network
+node_myQ.getDevices().then(deviceList => {
+    console.log(deviceList)
 }).catch(error => {})
+
+//or
+
+const deviceList = await node_myQ.getDevices()
 ```
 
 ## getDoorState(deviceId)
@@ -40,7 +45,8 @@ If deviceId is not provided, the API will default to the single deviceId that yo
 let deviceId = 212121 
 
 //deviceId is an optional overload
-node_myQ.getDoorState(deviceId).then(state => {
+node_myQ.getDoorState(deviceId).then(doorState => {
+    console.log(doorState)
     //Returns a string of door state. See Return Values at the bottom of the page.
 }).catch(error => {})
 
@@ -136,13 +142,14 @@ console.log('yay, door is open!)
 Returns an array of door or garage door devices that were automatically added to the API using autoSetMultipleGarageDoorDevices: true
 
 ``` javascript
-node_myQ.getAutoAddedDevices().then(list => {
+node_myQ.getAutoAddedDevices().then(deviceList => {
+    console.log(deviceList)
     // Promise resolves on success
 }).catch(error => {})
 
 //or
 
-let deviceList = await node_myQ.getAutoAddedDevices()
+const deviceList = await node_myQ.getAutoAddedDevices()
 ```
 
 ## Return Values
