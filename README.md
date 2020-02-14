@@ -75,8 +75,10 @@ myq.openDoor(deviceId).then(data => {
 }).catch(error => {})
 
 //or
-
 await myq.openDoor()
+
+//or
+const response = await myq.openDoor()
 ```
 
 This is an example return object 
@@ -105,8 +107,10 @@ myq.closeDoor(deviceId).then(data => {
 }).catch(error => {})
 
 //or
-
 await myq.closeDoor()
+
+//or
+const response = await myq.closeDoor()
 ```
 
 This is an example return object 
@@ -142,8 +146,7 @@ myq.detectDoorStateChange(desiredState, deviceId).then(state => {
 }).catch(error => {})
 
 //or 
-
-const state = await myq.detectDoorStateChange(state)
+const state = await myq.detectDoorStateChange(desiredState)
 
 console.log('the door is now ' + state)
 ```
