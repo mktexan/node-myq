@@ -4,10 +4,11 @@ let config = new Object()
 let constants = {
     types: {
         close: 0,
-        open: 1
+        open: 1,
+        toggle: 'toggle'
     },
     doorStates: {
-        1: 'NA',
+        1: 'open',
         2: 'closed',
         3: 'stopped in the middle',
         4: 'going up',
@@ -40,17 +41,26 @@ let constants = {
         Culture: 'en',
         MyQApplicationId: 'Vj8pQggXLhLy0WHahglCD4N1nAkkXQtGYpq2HrHD7H1nvmbT55KqtN6RSF4ILB/i',
     },
-    deprecatedUrl:'https://myqexternal.myqdevice.com/',
+    deprecatedUrl: 'https://myqexternal.myqdevice.com/',
     emailError: 'Enter an email address',
     passwordError: 'Enter a password',
     deviceSetError: 'Unable to auto set MyQ device',
     baseUrl: 'https://myqexternal.myqdevice.com/api/v4/',
     stateUrlFront: 'DeviceAttribute/GetDeviceAttribute?myQDeviceId=',
     doorStateUrlEnd: '&attributeName=doorstate',
-    lightStateUrlEnd: 'attributeName=lightstate',
+    lightStateUrlEnd: '&attributeName=lightstate',
     devicesUrl: 'UserDeviceDetails/Get?filterOn=true',
     changeDeviceStateUrl: 'DeviceAttribute/PutDeviceAttribute',
     validateUrl: 'User/Validate',
+    desiredDoorState: 'desireddoorstate',
+    desiredLightState: 'desiredlightstate',
+    close: 'close',
+    json: 'json',
+    emptyString: '',
+    open: 'open',
+    PUT: 'PUT',
+    POST: 'POST',
+    GET: 'GET'
 }
 
 let token = ''
