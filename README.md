@@ -23,6 +23,9 @@ myq.setCredentials('email@example.com', 'password', options)
 # Methods
 Other APIs hav a login() function for myQ. This API handles login state and tokens automatically for you! Just set your credentials and the rest is taken care of.
 
+deviceId is an optional overload. Use it if you have multiple devices in your network and wish to call a specific device.
+If deviceId is not provided, the API will default to the single deviceId that you set using autoSetGarageDoorDevice: true or deviceId: yourDeviceId.
+
 ## getDevices()
 
 A promise that returns an array of devices detected on the network
@@ -35,15 +38,12 @@ myq.getDevices().then(deviceList => {
 }).catch(error => {})
 
 //or
-
 const deviceList = await myq.getDevices()
 ```
 
 ## getDoorState(deviceId)
 
 Promise resolves a string of door state on success of the call. Reference the constants below to see the door state output.
-deviceId is optional. Use it if you have multiple devices in your network and wish to call a specific device.
-If deviceId is not provided, the API will default to the single deviceId that you set using autoSetGarageDoorDevice: true or deviceId: yourDeviceId.
 
 ``` javascript
 const deviceId = 212121
@@ -56,14 +56,12 @@ myq.getDoorState(deviceId).then(doorState => {
 }).catch(error => {})
 
 //or
-
 const doorState = await myq.getDoorState()
 ```
 
 ## openDoor(deviceId)
 
-Promise resolves on success of call.deviceId is optional. Use it if you have multiple devices in your network and wish to call a specific device.
-If deviceId is not provided, the API will default to the single deviceId that you set using autoSetGarageDoorDevice: true or deviceId: yourDeviceId.
+Promise resolves an object from the myQ device on success of call.
 
 ``` javascript
 const deviceId = 212121
@@ -94,8 +92,7 @@ This is an example return object
 
 ## closeDoor(deviceId)
 
-Promise resolves on success of call. deviceId is an optional overload. Use it if you have multiple devices in your network and wish to call a specific device.
-If deviceId is not provided, the API will default to the single deviceId that you set using autoSetGarageDoorDevice: true or deviceId: yourDeviceId.
+Promise resolves an object from the myQ device on success of call.
 
 ``` javascript
 const deviceId = 212121
@@ -127,9 +124,7 @@ This is an example return object
 ## detectDoorStateChange(state, deviceId)
 
 Resolves when door action completes. Use this method once the door starts closing or opening.
-Rejects after 30 seconds and if the door is still in the previous state.
- deviceId is optional. Use it if you have multiple devices in your network and wish to call a specific device.
-If deviceId is not provided, the API will default to the single deviceId that you set using autoSetGarageDoorDevice: true or deviceId: yourDeviceId.
+Rejects after 30 seconds and if the door is still in the same state.
 
 ``` javascript
 const deviceId = 212121

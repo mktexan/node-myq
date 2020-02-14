@@ -185,7 +185,6 @@ const setDoorState = async (change, deviceId) => {
 
 const getLightState = async () => {
     return new Promise(async (resolve, reject) => {
-
         deviceId = deviceId || configuration.config.deviceId
 
         const token = await getToken()
@@ -207,7 +206,6 @@ const getLightState = async () => {
 
 const setLightState = async (desiredState, deviceId) => {
     return new Promise(async (resolve, reject) => {
-
         deviceId = deviceId || configuration.config.deviceId
 
         const token = await getToken()
