@@ -97,52 +97,32 @@ myq.closeDoor(deviceId).then(_ => {
 await myq.closeDoor()
 ```
 
-## detectWhenDoorIsClosed(deviceId)
+## detectDoorStateChange(deviceId)
 
-Resolves when door closes. Use this method once the door starts closing.
-Rejects after 30 seconds and if the door is still opened.
+Resolves when door action completes. Use this method once the door starts closing or opening.
+Rejects after 30 seconds and if the door is still in the previous state.
  deviceId is optional. Use it if you have multiple devices in your network and wish to call a specific device.
 If deviceId is not provided, the API will default to the single deviceId that you set using autoSetGarageDoorDevice: true or deviceId: yourDeviceId.
 
 ``` javascript
 let deviceId = 212121
 
+//pass either opened or closed as the state
+let state = "closed"
+let state = "opened"
+
 //deviceId is an optional overload
 
-myq.detectWhenDoorIsClosed(deviceId).then(_ => {
-    console.log('door is now closed!')
+myq.detectDoorStateChange(state, deviceId).then(_ => {
+    console.log('the door is now ' + state)
     // Promise resolves on success
 }).catch(error => {})
 
 //or 
 
-await myq.detectWhenDoorIsClosed()
+await myq.detectWhenDoorIsClosed(state)
 
-console.log('yay, door is closed!')
-```
-
-## detectWhenDoorIsOpen(deviceId)
-
-Resolves when door opens. Use this method once the door starts opening.
- deviceId is optional. Use it if you have multiple devices in your network and wish to call a specific device.
-If deviceId is not provided, the API will default to the single deviceId that you set using autoSetGarageDoorDevice: true or deviceId: yourDeviceId.
-Rejects after 30 seconds and if the door is still closed.
-
-``` javascript
-let deviceId = 212121
-
-// deviceId is an optional overload
-
-myq.detectWhenDoorIsOpen(deviceId).then(_ => {
-    console.log('door is now opened!')
-    // Promise resolves on success
-}).catch(error => {})
-
-//or
-
-await myq.detectWhenDoorIsOpen()
-
-console.log('yay, door is open!')
+console.log('the door is now ' + state)
 ```
 
 ## getAutoAddedDevices()
