@@ -212,7 +212,7 @@ const setLightState = async (state) => {
     }).catch(error => reject(error))
 }
 
-const detectWhenDoorIsClosed = async (deviceId) => {
+const detectDoorStateChange = async (deviceId, desiredState) => {
     return new Promise(async (resolve, reject) => {
         let stop = false
         let timeStamp = new Date()
@@ -222,25 +222,7 @@ const detectWhenDoorIsClosed = async (deviceId) => {
             await pause()
             let doorState = await getDoorState(deviceId)
             let tickTimestamp = new Date()
-            if (doorState != configuration.constants.doorStates[2] && timeStamp - tickTimestamp < thirtySeconds) continue
-            if (timeStamp - tickTimestamp > thirtySeconds) reject()
-            stop = true
-            resolve()
-        }
-    }).catch(error => reject(error))
-}
-
-const detectWhenDoorIsOpen = async (deviceId) => {
-    return new Promise(async (resolve, reject) => {
-        let stop = false
-        let timeStamp = new Date()
-        let thirtySeconds = 1 * 30 * 1000
-
-        while (!stop) {
-            await pause()
-            let doorState = await getDoorState(deviceId)
-            let tickTimestamp = new Date()
-            if (doorState != configuration.constants.doorStates[9] && timeStamp - tickTimestamp < thirtySeconds) continue
+            if (doorState != desiredState && timeStamp - tickTimestamp < thirtySeconds) continue
             if (timeStamp - tickTimestamp > thirtySeconds) reject()
             stop = true
             resolve()
@@ -267,8 +249,7 @@ const pause = async () => {
 
 exports.getAutoAddedDevices = getAutoAddedDevices
 exports.setCredentials = setCredentials
-exports.detectWhenDoorIsClosed = detectWhenDoorIsClosed
-exports.detectWhenDoorIsOpen = detectWhenDoorIsOpen
+exports.detectDoorStateChange = detectDoorStateChange
 exports.getDevices = getDevices
 exports.getDoorState = getDoorState
 exports.openDoor = openDoor
