@@ -72,16 +72,15 @@ const callMyQDevice = async (options, type) => {
 
 const getToken = async () => {
     return new Promise(async (resolve, reject) => {
-        const options = {
-            url: configuration.constants.baseUrl + configuration.constants.validateUrl,
-            headers: setHeader(),
-            gzip: true,
-            body: {
-                password: configuration.config.password,
-                username: configuration.config.user
-            },
-            json: true
-        }
+        const options = {}
+
+        options.url = configuration.constants.baseUrl + configuration.constants.validateUrl
+        options.headers = setHeader()
+        options.gzip = true
+        options.json = true
+        options.body = {}
+        options.body.password = configuration.config.password
+        options.body.username = configuration.config.user
 
         let data = await callMyQDevice(options, configuration.constants.POST)
 
@@ -97,12 +96,12 @@ const getToken = async () => {
 const getDevices = async () => {
     return new Promise(async (resolve, reject) => {
         const token = await getToken()
+        const options = {}
 
-        const options = {
-            url: configuration.constants.baseUrl + configuration.constants.devicesUrl,
-            headers: setHeader({ SecurityToken: token }),
-            gzip: true
-        }
+        options.url = configuration.constants.baseUrl + configuration.constants.devicesUrl
+        options.headers = setHeader({ SecurityToken: token })
+        options.gzip = true
+
 
         const deviceList = await callMyQDevice(options, configuration.constants.GET)
 
@@ -118,15 +117,13 @@ const getDoorState = async (deviceId) => {
         deviceId = deviceId || configuration.config.deviceId
 
         const token = await getToken()
+        const options = {}
 
-        const options = {
-            url: configuration.constants.baseUrl + configuration.constants.stateUrlFront + deviceId + configuration.constants.doorStateUrlEnd,
-            headers: setHeader({ SecurityToken: token }),
-            gzip: true
-        }
+        options.url = configuration.constants.baseUrl + configuration.constants.stateUrlFront + deviceId + configuration.constants.doorStateUrlEnd
+        options.headers = setHeader({ SecurityToken: token })
+        options.gzip = true
 
         const deviceState = await callMyQDevice(options, configuration.constants.GET)
-
         const doorStatus = configuration.constants.doorStates[Number(deviceState.AttributeValue)]
 
         resolve(doorStatus)
@@ -163,18 +160,16 @@ const closeDoor = async (deviceId) => {
 const setDoorState = async (change, deviceId) => {
     return new Promise(async (resolve, reject) => {
         const token = await getToken()
+        const options = {}
 
-        const options = {
-            url: configuration.constants.baseUrl + configuration.constants.changeDeviceStateUrl,
-            headers: setHeader({ SecurityToken: token }),
-            body: {
-                attributeName: configuration.constants.desiredDoorState,
-                AttributeValue: configuration.constants.types[change],
-                myQDeviceId: deviceId
-            },
-            json: true,
-            gzip: true
-        }
+        options.url = configuration.constants.baseUrl + configuration.constants.changeDeviceStateUrl
+        options.headers = setHeader({ SecurityToken: token })
+        options.json = true
+        options.gzip = true
+        options.body = {}
+        options.body.attributeName = configuration.constants.desiredDoorState
+        options.body.AttributeValue = configuration.constants.types[change]
+        options.body.myQDeviceId = deviceId
 
         let data = await callMyQDevice(options, configuration.constants.PUT)
 
@@ -196,7 +191,6 @@ const getLightState = async () => {
         }
 
         const lightState = await callMyQDevice(options, configuration.constants.GET)
-
         const lightStatus = configuration.constants.lightState[Number(lightState.AttributeValue)]
 
         resolve(lightStatus)
@@ -210,17 +204,15 @@ const setLightState = async (desiredState, deviceId) => {
 
         const token = await getToken()
 
-        const options = {
-            url: configuration.constants.baseUrl + configuration.constants.changeDeviceStateUrl,
-            headers: setHeader({ SecurityToken: token }),
-            body: {
-                attributeName: configuration.constants.desiredLightState,
-                AttributeValue: configuration.constants.lightState[desiredState],
-                myQDeviceId: deviceId
-            },
-            json: true,
-            gzip: true
-        }
+        const options = {}
+        options.url = configuration.constants.baseUrl + configuration.constants.changeDeviceStateUrl
+        options.headers = setHeader({ SecurityToken: token })
+        options.body = {}
+        options.json = true
+        options.gzip = true
+        options.body.attributeName = configuration.constants.desiredLightState
+        options.body.AttributeValue = configuration.constants.lightState[desiredState]
+        options.body.myQDeviceId = deviceId
 
         const lightState = await callMyQDevice(options, configuration.constants.PUT)
 

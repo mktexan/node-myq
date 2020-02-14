@@ -46,9 +46,8 @@ const deviceList = await myq.getDevices()
 Promise resolves a string of door state on success of the call. Reference the constants below to see the door state output.
 
 ``` javascript
-const deviceId = 212121
-
 //deviceId is an optional overload
+const deviceId = 212121
 
 myq.getDoorState(deviceId).then(doorState => {
     console.log(doorState)
@@ -64,9 +63,8 @@ const doorState = await myq.getDoorState()
 Promise resolves an object from the myQ device on success of call.
 
 ``` javascript
-const deviceId = 212121
-
 //deviceId is an optional overload
+const deviceId = 212121
 
 myq.openDoor(deviceId).then(data => {
     // Promise resolves on success with a return object from the MyQ device
@@ -95,9 +93,8 @@ This is an example return object
 Promise resolves an object from the myQ device on success of call.
 
 ``` javascript
-const deviceId = 212121
-
 //deviceId is an optional overload
+const deviceId = 212121
 
 myq.closeDoor(deviceId).then(data => {
     // Promise resolves on success with a return object from the MyQ device
@@ -180,3 +177,7 @@ const deviceList = await myq.getAutoAddedDevices()
 ## License
 
 [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
+
+## Keywords
+
+home automation myq chamberlain liftmaster garage door lights
