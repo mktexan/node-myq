@@ -212,7 +212,7 @@ const setLightState = async (state) => {
     }).catch(error => reject(error))
 }
 
-const detectDoorStateChange = async (deviceId, desiredState) => {
+const detectDoorStateChange = async (desiredState, deviceId) => {
     return new Promise(async (resolve, reject) => {
         let stop = false
         let timeStamp = new Date()
@@ -227,6 +227,7 @@ const detectDoorStateChange = async (deviceId, desiredState) => {
             stop = true
             resolve()
         }
+
     }).catch(error => reject(error))
 }
 
@@ -239,7 +240,6 @@ const getAutoAddedDevices = async () => {
 
 const checkApiVersion = async () => {
     const apiV4 = await getDevices()
-
     if (apiV4) return
 }
 

@@ -21,6 +21,7 @@ myq.setCredentials('email@example.com', 'password', options)
 ```
 
 # Methods
+Other APIs hav a login() function for myQ. This API handles login state and tokens automatically for you! Just set your credentials and the rest is taken care of.
 
 ## getDevices()
 
@@ -69,7 +70,7 @@ let deviceId = 212121
 
 //deviceId is an optional overload
 
-myq.openDoor(devideId).then(_ => {
+myq.openDoor(deviceId).then(_ => {
     // Promise resolves on success
 }).catch(error => {})
 
