@@ -120,7 +120,7 @@ myq.detectDoorStateChange(state, deviceId).then(_ => {
 
 //or 
 
-await myq.detectWhenDoorIsClosed(state)
+await myq.detectDoorStateChange(state)
 
 console.log('the door is now ' + state)
 ```
