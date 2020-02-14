@@ -178,6 +178,3 @@ const deviceList = await myq.getAutoAddedDevices()
 
 [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
 
-## Keywords
-
-home automation myq chamberlain liftmaster garage door lights
