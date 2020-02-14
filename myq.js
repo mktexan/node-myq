@@ -102,7 +102,6 @@ const getDevices = async () => {
         options.headers = setHeader({ SecurityToken: token })
         options.gzip = true
 
-
         const deviceList = await callMyQDevice(options, configuration.constants.GET)
 
         if (deviceList.ErrorMessage != configuration.constants.emptyString) reject(deviceList.ErrorMessage)
@@ -189,7 +188,6 @@ const getLightState = async () => {
         options.headers = setHeader({ SecurityToken: token })
         options.gzip = true
 
-
         const lightState = await callMyQDevice(options, configuration.constants.GET)
         const lightStatus = configuration.constants.lightState[Number(lightState.AttributeValue)]
 
@@ -204,7 +202,7 @@ const setLightState = async (desiredState, deviceId) => {
 
         const token = await getToken()
         const options = {}
-        
+
         options.url = configuration.constants.baseUrl + configuration.constants.changeDeviceStateUrl
         options.headers = setHeader({ SecurityToken: token })
         options.body = {}
