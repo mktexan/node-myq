@@ -142,7 +142,7 @@ const openDoor = async (deviceId) => {
 
         if (data.ErrorMessage != '') reject(data.ErrorMessage)
 
-        resolve()
+        resolve(data)
 
     }).catch(error => reject(error))
 }
@@ -155,7 +155,7 @@ const closeDoor = async (deviceId) => {
 
         if (data.ErrorMessage) reject(data.ErrorMessage)
 
-        resolve()
+        resolve(data)
 
     }).catch(error => reject(error))
 }
@@ -225,7 +225,7 @@ const detectDoorStateChange = async (desiredState, deviceId) => {
             if (doorState != desiredState && timeStamp - tickTimestamp < thirtySeconds) continue
             if (timeStamp - tickTimestamp > thirtySeconds) reject()
             stop = true
-            resolve()
+            resolve(desiredState)
         }
 
     }).catch(error => reject(error))

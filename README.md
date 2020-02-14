@@ -11,7 +11,7 @@ A lightweight module for the Chamberlain / Liftmaster - MyQ Smart Garage Hub
 ``` javascript
 const myq = require('node-myq')
 
-let options = {
+const options = {
     autoSetGarageDoorDevice: true, //automatically adds a SINGLE DOOR to the API
     autoSetMultipleGarageDoorDevices: false, //automatically adds ALL DETECTED DOORS to the API
     deviceId: 213213 //use this to manually set your own single deviceId
@@ -46,7 +46,7 @@ deviceId is optional. Use it if you have multiple devices in your network and wi
 If deviceId is not provided, the API will default to the single deviceId that you set using autoSetGarageDoorDevice: true or deviceId: yourDeviceId.
 
 ``` javascript
-let deviceId = 212121
+const deviceId = 212121
 
 //deviceId is an optional overload
 
@@ -66,12 +66,12 @@ Promise resolves on success of call.deviceId is optional. Use it if you have mul
 If deviceId is not provided, the API will default to the single deviceId that you set using autoSetGarageDoorDevice: true or deviceId: yourDeviceId.
 
 ``` javascript
-let deviceId = 212121
+const deviceId = 212121
 
 //deviceId is an optional overload
 
-myq.openDoor(deviceId).then(_ => {
-    // Promise resolves on success
+myq.openDoor(deviceId).then(data => {
+    // Promise resolves on success with a return object from the MyQ device
 }).catch(error => {})
 
 //or
@@ -79,18 +79,29 @@ myq.openDoor(deviceId).then(_ => {
 await myq.openDoor()
 ```
 
+This is an example return object 
+
+``` javascript
+{
+  UpdatedTime: '1581692278599',
+  ReturnCode: '0',
+  ErrorMessage: '',
+  CorrelationId: '223e24ef-e452-4fda-a027-5570858ab341'
+}
+```
+
 ## closeDoor(deviceId)
 
-Promise resolves on success of call.deviceId is optional. Use it if you have multiple devices in your network and wish to call a specific device.
+Promise resolves on success of call. deviceId is an optional overload. Use it if you have multiple devices in your network and wish to call a specific device.
 If deviceId is not provided, the API will default to the single deviceId that you set using autoSetGarageDoorDevice: true or deviceId: yourDeviceId.
 
 ``` javascript
-let deviceId = 212121
+const deviceId = 212121
 
 //deviceId is an optional overload
 
-myq.closeDoor(deviceId).then(_ => {
-    // Promise resolves on success
+myq.closeDoor(deviceId).then(data => {
+    // Promise resolves on success with a return object from the MyQ device
 }).catch(error => {})
 
 //or
@@ -98,7 +109,18 @@ myq.closeDoor(deviceId).then(_ => {
 await myq.closeDoor()
 ```
 
-## detectDoorStateChange(deviceId)
+This is an example return object 
+
+``` javascript
+{
+  UpdatedTime: '1581692278599',
+  ReturnCode: '0',
+  ErrorMessage: '',
+  CorrelationId: '223e24ef-e452-4fda-a027-5570858ab341'
+}
+```
+
+## detectDoorStateChange(state, deviceId)
 
 Resolves when door action completes. Use this method once the door starts closing or opening.
 Rejects after 30 seconds and if the door is still in the previous state.
@@ -106,22 +128,22 @@ Rejects after 30 seconds and if the door is still in the previous state.
 If deviceId is not provided, the API will default to the single deviceId that you set using autoSetGarageDoorDevice: true or deviceId: yourDeviceId.
 
 ``` javascript
-let deviceId = 212121
+const deviceId = 212121
 
 //pass either opened or closed as the state
-let state = "closed"
-let state = "opened"
+const desiredState = "closed"
+const desiredState = "opened"
 
 //deviceId is an optional overload
 
-myq.detectDoorStateChange(state, deviceId).then(_ => {
+myq.detectDoorStateChange(desiredState, deviceId).then(state => {
     console.log('the door is now ' + state)
     // Promise resolves on success
 }).catch(error => {})
 
 //or 
 
-await myq.detectDoorStateChange(state)
+const state = await myq.detectDoorStateChange(state)
 
 console.log('the door is now ' + state)
 ```
