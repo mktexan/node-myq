@@ -13,7 +13,7 @@ const myq = require('node-myq')
 
 const options = {
     autoSetGarageDoorDevice: true, //automatically adds a SINGLE DOOR to the API
-    autoSetMultipleGarageDoorDevices: false, //automatically adds ALL DETECTED DOORS to the API
+    autoSetMultipleGarageDoorDevices: true, //automatically adds ALL DETECTED DOORS to the API
     deviceId: 213213 //use this to manually set your own single deviceId
 }
 
@@ -153,7 +153,7 @@ console.log('the door is now ' + state)
 
 ## getAutoAddedDevices()
 
-Returns an array of door or garage door devices that were automatically added to the API using autoSetMultipleGarageDoorDevices: true
+Returns an array of door or garage door device objects that were automatically added to the API using autoSetMultipleGarageDoorDevices: true
 
 ``` javascript
 myq.getAutoAddedDevices().then(deviceList => {
@@ -177,3 +177,11 @@ const deviceList = await myq.getAutoAddedDevices()
 | 5          | going down            |
 | 9          | opened                |
 
+
+## Author
+
+[Cole Stasney](https://cole-stasney.com/) ([mkcoarng@gmail.com](mailto:mkcoarng@gmail.com))
+
+## License
+
+[Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
