@@ -47,13 +47,13 @@ const autoSetMultipleGarageDoorDevices = async () => {
 const autoSetSingleGarageDevice = async () => {
     const device = await getDevices()
     device.Devices.forEach(element => {
-        let id = element.MyQDeviceTypeId
+        const id = element.MyQDeviceTypeId
         if (id === 7 || id === 17 || id === 5) configuration.config.deviceId = element.MyQDeviceId
     })
 }
 
 const addDeviceToList = (element) => {
-    let deviceList = {}
+    const deviceList = {}
 
     deviceList.MyQDeviceId = element.MyQDeviceId
     deviceList.MyQDeviceTypeId = element.MyQDeviceTypeId
@@ -82,7 +82,7 @@ const getToken = async () => {
         options.body.password = configuration.config.password
         options.body.username = configuration.config.user
 
-        let data = await callMyQDevice(options, configuration.constants.POST)
+        const data = await callMyQDevice(options, configuration.constants.POST)
 
         if (data.SecurityToken === undefined) reject(data.ErrorMessage)
 
@@ -134,7 +134,7 @@ const openDoor = async (deviceId) => {
     return new Promise(async (resolve, reject) => {
         deviceId = deviceId || configuration.config.deviceId
 
-        let data = await setDoorState(configuration.constants.open, deviceId)
+        const data = await setDoorState(configuration.constants.open, deviceId)
 
         if (data.ErrorMessage != configuration.constants.emptyString) reject(data.ErrorMessage)
 
@@ -147,7 +147,7 @@ const closeDoor = async (deviceId) => {
     return new Promise(async (resolve, reject) => {
         deviceId = deviceId || configuration.config.deviceId
 
-        let data = await setDoorState(configuration.constants.close, deviceId)
+        const data = await setDoorState(configuration.constants.close, deviceId)
 
         if (data.ErrorMessage) reject(data.ErrorMessage)
 
@@ -170,7 +170,7 @@ const setDoorState = async (change, deviceId) => {
         options.body.AttributeValue = configuration.constants.types[change]
         options.body.myQDeviceId = deviceId
 
-        let data = await callMyQDevice(options, configuration.constants.PUT)
+        const data = await callMyQDevice(options, configuration.constants.PUT)
 
         resolve(data)
 
@@ -222,13 +222,13 @@ const setLightState = async (desiredState, deviceId) => {
 const detectDoorStateChange = async (desiredState, deviceId) => {
     return new Promise(async (resolve, reject) => {
         let stop = false
-        let timeStamp = new Date()
-        let thirtySeconds = 1 * 30 * 1000
+        const timeStamp = new Date()
+        const thirtySeconds = 1 * 30 * 1000
 
         while (!stop) {
             await pause()
-            let doorState = await getDoorState(deviceId)
-            let tickTimestamp = new Date()
+            const doorState = await getDoorState(deviceId)
+            const tickTimestamp = new Date()
             if (doorState != desiredState && timeStamp - tickTimestamp < thirtySeconds) continue
             if (timeStamp - tickTimestamp > thirtySeconds) reject()
             stop = true
