@@ -30,7 +30,7 @@ const setCredentials = (user, password, options) => {
 
 const setHeader = (token) => {
     if (token) return Object.assign(configuration.constants.base, token)
-    else return configuration.constants.base
+    return configuration.constants.base
 }
 
 const autoSetMultipleGarageDoorDevices = async () => {
@@ -39,7 +39,7 @@ const autoSetMultipleGarageDoorDevices = async () => {
     configuration.config.multipleDevices = true
 
     device.Devices.forEach(element => {
-        let id = element.MyQDeviceTypeId
+        const id = element.MyQDeviceTypeId
         if (id === 7 || id === 17 || id === 5) addDeviceToList(element)
     })
 }
