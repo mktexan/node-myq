@@ -110,12 +110,11 @@ const getDevices = async () => {
 
 const getDoorState = async (deviceId) => {
     return new Promise(async (resolve, reject) => {
-        deviceId = deviceId || configuration.config.deviceId
-
+        const id = deviceId ? deviceId : configuration.config.deviceId
         const token = await getToken()
         const options = {}
 
-        options.url = configuration.constants.baseUrl + configuration.constants.stateUrlFront + deviceId + configuration.constants.doorStateUrlEnd
+        options.url = configuration.constants.baseUrl + configuration.constants.stateUrlFront + id + configuration.constants.doorStateUrlEnd
         options.headers = setHeader({ SecurityToken: token })
 
         const deviceState = await callMyQDevice(options, configuration.constants.GET)
@@ -128,9 +127,8 @@ const getDoorState = async (deviceId) => {
 
 const openDoor = async (deviceId) => {
     return new Promise(async (resolve, reject) => {
-        deviceId = deviceId || configuration.config.deviceId
-
-        const data = await setDoorState(configuration.constants.open, deviceId)
+        const id = deviceId ? deviceId : configuration.config.deviceId
+        const data = await setDoorState(configuration.constants.open, id)
 
         if (data.ErrorMessage != configuration.constants.emptyString) reject(data.ErrorMessage)
 
@@ -141,9 +139,8 @@ const openDoor = async (deviceId) => {
 
 const closeDoor = async (deviceId) => {
     return new Promise(async (resolve, reject) => {
-        deviceId = deviceId || configuration.config.deviceId
-
-        const data = await setDoorState(configuration.constants.close, deviceId)
+        const id = deviceId ? deviceId : configuration.config.deviceId
+        const data = await setDoorState(configuration.constants.close, id)
 
         if (data.ErrorMessage) reject(data.ErrorMessage)
 
@@ -171,14 +168,13 @@ const setDoorState = async (change, deviceId) => {
     }).catch(error => reject(error))
 }
 
-const getLightState = async () => {
+const getLightState = async (deviceId) => {
     return new Promise(async (resolve, reject) => {
-        deviceId = deviceId || configuration.config.deviceId
-
+        const id = deviceId ? deviceId : configuration.config.deviceId
         const token = await getToken()
         const options = {}
 
-        options.url = configuration.constants.baseUrl + configuration.constants.stateUrlFront + deviceId + configuration.constants.lightStateUrlEnd
+        options.url = configuration.constants.baseUrl + configuration.constants.stateUrlFront + id + configuration.constants.lightStateUrlEnd
         options.headers = setHeader({ SecurityToken: token })
 
         const lightState = await callMyQDevice(options, configuration.constants.GET)
@@ -191,8 +187,7 @@ const getLightState = async () => {
 
 const setLightState = async (desiredState, deviceId) => {
     return new Promise(async (resolve, reject) => {
-        deviceId = deviceId || configuration.config.deviceId
-
+        const id = deviceId ? deviceId : configuration.config.deviceId
         const token = await getToken()
         const options = {}
 
@@ -201,7 +196,7 @@ const setLightState = async (desiredState, deviceId) => {
         options.body = {}
         options.body.attributeName = configuration.constants.desiredLightState
         options.body.AttributeValue = configuration.constants.lightState[desiredState]
-        options.body.myQDeviceId = deviceId
+        options.body.myQDeviceId = id
 
         const lightState = await callMyQDevice(options, configuration.constants.PUT)
 
