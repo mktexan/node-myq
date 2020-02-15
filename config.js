@@ -1,7 +1,7 @@
 
 let config = new Object()
 
-let constants = {
+const constants = {
     types: {
         close: 0,
         open: 1,
@@ -64,7 +64,7 @@ let constants = {
 }
 
 let token = ''
-var devices = []
+let devices = []
 
 module.exports = {
     config,
