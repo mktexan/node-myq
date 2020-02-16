@@ -26,7 +26,7 @@ const setCredentials = (user, password, options) => {
 
     if (options && options.autoSetGarageDoorDevice) autoSetSingleGarageDevice()
     if (options && options.autoSetMultipleGarageDoorDevices) autoSetMultipleGarageDoorDevices()
-    if (options && options.autoRefreshToken) configuration.autoRefreshToken = true
+    if (options && options.autoRefreshToken) configuration.smartTokenManagement = true
 }
 
 const setHeader = (token) => {
