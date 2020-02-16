@@ -59,6 +59,7 @@ const constants = {
     getDoorState: 'getDoorState',
     getDevices: 'getDevices',
     getToken: 'getToken',
+    timeOutRefreshToken: 600000,
     close: 'close',
     json: 'json',
     emptyString: '',

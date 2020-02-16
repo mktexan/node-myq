@@ -12,17 +12,15 @@ const myq = require('node-myq')
 
 const options = {
     autoSetGarageDoorDevice: true, //automatically adds a SINGLE DOOR to the API
-    autoSetMultipleGarageDoorDevices: true, //automatically adds ALL DETECTED DOORS to the API
+    autoSetMultipleGarageDoorDevices: true, //automatically adds MULTIPLE DOORS to the API
     deviceId: 213213, //use this to manually set your own single deviceId
-    smartTokenManagement: true // allows faster API calls. Prevents token refresh on each call
+    smartTokenManagement: true // allows for significantly increased performance by managing token state
 }
 
 myq.setCredentials('email@example.com', 'password', options)
 ```
 
 # Methods
-Other APIs hav a login() function for myQ. This API handles login state and tokens automatically for you! Just set your credentials and the rest is taken care of.
-
 deviceId is an optional overload. Use it if you have multiple devices in your network and wish to call a specific device.
 If deviceId is not provided, the API will default to the single deviceId that you set using autoSetGarageDoorDevice: true or deviceId: yourDeviceId.
 

@@ -23,15 +23,21 @@ const setCredentials = (user, password, options) => {
     configuration.config.password = password
 
     if (options.deviceId) configuration.config.deviceId = options.deviceId
-
-    if (options && options.autoSetGarageDoorDevice) autoSetSingleGarageDevice()
-    if (options && options.autoSetMultipleGarageDoorDevices) autoSetMultipleGarageDoorDevices()
-    if (options && options.smartTokenManagement) configuration.config.smartTokenManagement = true
+    if (options.autoSetGarageDoorDevice) autoSetSingleGarageDevice()
+    if (options.autoSetMultipleGarageDoorDevices) autoSetMultipleGarageDoorDevices()
+    if (options.smartTokenManagement) setRefreshToken()
 }
 
 const setHeader = (token) => {
     if (token) return Object.assign(configuration.constants.base, token)
     return configuration.constants.base
+}
+
+const setRefreshToken = async () => {
+    configuration.config.smartTokenManagement = true
+    setInterval(() => {
+        getToken()
+    }, configuration.constants.timeOutRefreshToken)
 }
 
 const autoSetMultipleGarageDoorDevices = async () => {
@@ -74,12 +80,12 @@ const callMyQDevice = async (options, type) => {
 const getToken = async () => {
     return new Promise(async (resolve, reject) => {
         const options = {}
-        const oneMinute = 1 * 60 * 1000
+        const tenMinutes = 10 * 60 * 1000
         const timeStamp = new Date()
         const configTimeStamp = configuration.tokenTimeStamp
         const smartTokenManagement = configuration.config.smartTokenManagement
 
-        if (configTimeStamp && smartTokenManagement && timeStamp - configTimeStamp < oneMinute) resolve(configuration.token)
+        if (configTimeStamp && smartTokenManagement && timeStamp - configTimeStamp < tenMinutes) resolve(configuration.token)
 
         options.url = configuration.constants.baseUrl + configuration.constants.validateUrl
         options.headers = setHeader()
