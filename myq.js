@@ -26,7 +26,7 @@ const setCredentials = (user, password, options) => {
 
     if (options && options.autoSetGarageDoorDevice) autoSetSingleGarageDevice()
     if (options && options.autoSetMultipleGarageDoorDevices) autoSetMultipleGarageDoorDevices()
-    if (options && options.smartTokenManagement) configuration.smartTokenManagement = true
+    if (options && options.smartTokenManagement) configuration.config.smartTokenManagement = true
 }
 
 const setHeader = (token) => {
@@ -77,7 +77,7 @@ const getToken = async () => {
         const oneMinute = 1 * 60 * 1000
         const timeStamp = new Date()
         const configTimeStamp = configuration.tokenTimeStamp
-        const smartTokenManagement = configuration.smartTokenManagement
+        const smartTokenManagement = configuration.config.smartTokenManagement
 
         if (configTimeStamp && smartTokenManagement && timeStamp - configTimeStamp < oneMinute) resolve(configuration.token)
 
