@@ -71,7 +71,7 @@ const constants = {
 let token
 let tokenTimeStamp
 let devices = []
-let smartTokenManagement = true
+let smartTokenManagement = false
 
 module.exports = {
     config,
