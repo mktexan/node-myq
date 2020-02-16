@@ -26,6 +26,7 @@ const setCredentials = (user, password, options) => {
 
     if (options && options.autoSetGarageDoorDevice) autoSetSingleGarageDevice()
     if (options && options.autoSetMultipleGarageDoorDevices) autoSetMultipleGarageDoorDevices()
+    if (options && options.autoRefreshToken) configuration.autoRefreshToken = true
 }
 
 const setHeader = (token) => {
@@ -73,6 +74,12 @@ const callMyQDevice = async (options, type) => {
 const getToken = async () => {
     return new Promise(async (resolve, reject) => {
         const options = {}
+        const oneMinute = 1 * 60 * 1000
+        const timeStamp = new Date()
+        const configTimeStamp = configuration.tokenTimeStamp
+        const smartTokenManagement = configuration.smartTokenManagement
+
+        if (configTimeStamp && smartTokenManagement && timeStamp - configTimeStamp < oneMinute) resolve(configuration.token)
 
         options.url = configuration.constants.baseUrl + configuration.constants.validateUrl
         options.headers = setHeader()
@@ -85,6 +92,7 @@ const getToken = async () => {
         if (data.SecurityToken === undefined) reject(data.ErrorMessage)
 
         configuration.token = data.SecurityToken
+        configuration.tokenTimeStamp = new Date()
 
         resolve(data.SecurityToken)
 

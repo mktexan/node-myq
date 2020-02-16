@@ -54,6 +54,11 @@ const constants = {
     validateUrl: 'User/Validate',
     desiredDoorState: 'desireddoorstate',
     desiredLightState: 'desiredlightstate',
+    getAutoAddedDevices: 'getAutoAddedDevices',
+    setDoorState: 'setDoorState',
+    getDoorState: 'getDoorState',
+    getDevices: 'getDevices',
+    getToken: 'getToken',
     close: 'close',
     json: 'json',
     emptyString: '',
@@ -63,13 +68,17 @@ const constants = {
     GET: 'GET'
 }
 
-let token = ''
+let token
+let tokenTimeStamp
 let devices = []
+let smartTokenManagement = true
 
 module.exports = {
     config,
     constants,
     token,
-    devices
+    tokenTimeStamp,
+    devices,
+    smartTokenManagement
 }
 
