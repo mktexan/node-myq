@@ -77,7 +77,6 @@ module.exports = {
     constants,
     token,
     tokenTimeStamp,
-    devices,
-    smartTokenManagement
+    devices
 }
 

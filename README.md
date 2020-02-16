@@ -1,6 +1,5 @@
 A lightweight module for the Chamberlain / Liftmaster - MyQ Smart Garage Hub
 
-*This project is actively developed. Please report any bugs and they will be addressed in a very timely manner.*
 
 # Install
 
