@@ -22,15 +22,22 @@ const setCredentials = (user, password, options) => {
     configuration.config.user = user
     configuration.config.password = password
 
+    checkApiVersion()
+
     if (options.deviceId) configuration.config.deviceId = options.deviceId
     if (options.autoSetGarageDoorDevice) autoSetSingleGarageDevice()
     if (options.autoSetMultipleGarageDoorDevices) autoSetMultipleGarageDoorDevices()
     if (options.smartTokenManagement) setRefreshToken()
 }
 
-const setHeader = (token) => {
+const setV4Header = (token) => {
     if (token) return Object.assign(configuration.constants.base, token)
     return configuration.constants.base
+}
+
+const setV5Header = (token) => {
+    if (token) return Object.assign(configuration.constants.apiV5.base, token)
+    return configuration.constants.apiV5.base
 }
 
 const setRefreshToken = async () => {
@@ -60,13 +67,13 @@ const autoSetSingleGarageDevice = async () => {
 }
 
 const addDeviceToList = (element) => {
-    const deviceList = {}
+    const device = {}
 
-    deviceList.MyQDeviceId = element.MyQDeviceId
-    deviceList.MyQDeviceTypeId = element.MyQDeviceTypeId
-    deviceList.MyQDeviceTypeName = element.MyQDeviceTypeName
+    device.MyQDeviceId = element.MyQDeviceId
+    device.MyQDeviceTypeId = element.MyQDeviceTypeId
+    device.MyQDeviceTypeName = element.MyQDeviceTypeName
 
-    configuration.devices.push(deviceList)
+    configuration.devices.push(device)
 }
 
 const callMyQDevice = async (options, type) => {
@@ -88,7 +95,7 @@ const getToken = async () => {
         if (configTimeStamp && smartTokenManagement && timeStamp - configTimeStamp < tenMinutes) resolve(configuration.token)
 
         options.url = configuration.constants.baseUrl + configuration.constants.validateUrl
-        options.headers = setHeader()
+        options.headers = setV4Header()
         options.body = {}
         options.body.password = configuration.config.password
         options.body.username = configuration.config.user
@@ -111,7 +118,7 @@ const getDevices = async () => {
         const options = {}
 
         options.url = configuration.constants.baseUrl + configuration.constants.devicesUrl
-        options.headers = setHeader({ SecurityToken: token })
+        options.headers = setV4Header({ SecurityToken: token })
 
         const deviceList = await callMyQDevice(options, configuration.constants.GET)
 
@@ -129,7 +136,7 @@ const getDoorState = async (deviceId) => {
         const options = {}
 
         options.url = configuration.constants.baseUrl + configuration.constants.stateUrlFront + id + configuration.constants.doorStateUrlEnd
-        options.headers = setHeader({ SecurityToken: token })
+        options.headers = setV4Header({ SecurityToken: token })
 
         const deviceState = await callMyQDevice(options, configuration.constants.GET)
         const doorStatus = configuration.constants.doorStates[Number(deviceState.AttributeValue)]
@@ -169,7 +176,7 @@ const setDoorState = async (change, deviceId) => {
         const options = {}
 
         options.url = configuration.constants.baseUrl + configuration.constants.changeDeviceStateUrl
-        options.headers = setHeader({ SecurityToken: token })
+        options.headers = setV4Header({ SecurityToken: token })
         options.body = {}
         options.body.attributeName = configuration.constants.desiredDoorState
         options.body.AttributeValue = configuration.constants.types[change]
@@ -189,7 +196,7 @@ const getLightState = async (deviceId) => {
         const options = {}
 
         options.url = configuration.constants.baseUrl + configuration.constants.stateUrlFront + id + configuration.constants.lightStateUrlEnd
-        options.headers = setHeader({ SecurityToken: token })
+        options.headers = setV4Header({ SecurityToken: token })
 
         const lightState = await callMyQDevice(options, configuration.constants.GET)
         const lightStatus = configuration.constants.lightState[Number(lightState.AttributeValue)]
@@ -206,7 +213,7 @@ const setLightState = async (desiredState, deviceId) => {
         const options = {}
 
         options.url = configuration.constants.baseUrl + configuration.constants.changeDeviceStateUrl
-        options.headers = setHeader({ SecurityToken: token })
+        options.headers = setV4Header({ SecurityToken: token })
         options.body = {}
         options.body.attributeName = configuration.constants.desiredLightState
         options.body.AttributeValue = configuration.constants.lightState[desiredState]
@@ -246,8 +253,48 @@ const getAutoAddedDevices = async () => {
 }
 
 const checkApiVersion = async () => {
-    const apiV4 = await getDevices()
-    if (apiV4) return
+    const apiV4 = await apiV4Check()
+    const apiV5 = await apiV5Check()
+
+    if (apiV4 && apiV5) configuration.defaultApiVersion = 5
+    if (apiV4 && !apiV5) configuration.defaultApiVersion = 4
+    if (!apiV4 && !apiv5) throw new Error(configuration.constants.emailError)
+}
+
+const apiV4Check = async () => {
+    return new Promise(async (resolve, reject) => {
+        const options = {}
+
+        options.url = configuration.constants.baseUrl + configuration.constants.validateUrl
+        options.headers = setV4Header()
+        options.body = {}
+        options.body.password = configuration.config.password
+        options.body.username = configuration.config.user
+
+        await callMyQDevice(options, configuration.constants.POST)
+
+        resolve(true)
+
+    }).catch(error => reject(false))
+}
+
+const apiV5Check = async () => {
+    return new Promise(async (resolve, reject) => {
+        const options = {}
+
+        options.url = configuration.constants.apiV5.loginUrl
+        options.headers = setV5Header()
+        options.body = {}
+        options.body.password = configuration.config.password
+        options.body.username = configuration.config.user
+
+        const data = await callMyQDevice(options, configuration.constants.POST)
+
+        if (data.SecurityToken === undefined) reject(false)
+
+        resolve(true)
+
+    }).catch(error => reject(false))
 }
 
 const pause = async () => {
