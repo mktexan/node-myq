@@ -22,11 +22,9 @@ const setCredentials = async (user, password, options) => {
     configuration.config.user = user
     configuration.config.password = password
 
-    await checkApiVersion()
-
     if (options.deviceId) configuration.config.deviceId = options.deviceId
-    if (options.apiV5) configuration.defaultApiVersion = 5
-    else configuration.defaultApiVersion = 4
+    if (options.apiVersion) configuration.defaultApiVersion = options.apiVersion
+    else await checkApiVersion()
     if (options.autoSetGarageDoorDevice) autoSetSingleGarageDevice()
     if (options.autoSetMultipleGarageDoorDevices) autoSetMultipleGarageDoorDevices()
     if (options.smartTokenManagement) setRefreshToken()
@@ -51,13 +49,20 @@ const setRefreshToken = async () => {
 
 const autoSetMultipleGarageDoorDevices = async () => {
     const device = await getDevices()
-
+    const apiVersion5 = configuration.defaultApiVersion === 5
     configuration.config.multipleDevices = true
 
-    device.Devices.forEach(element => {
-        const id = element.MyQDeviceTypeId
-        if (id === 7 || id === 17 || id === 5) addDeviceToList(element)
-    })
+    if (apiVersion5) {
+        device.items.forEach(element => {
+            if (element.device_type === configuration.constants.apiV5.deviceTypes.virtualGarageDoorOpener) addDeviceToList(element)
+
+        })
+    } else {
+        device.Devices.forEach(element => {
+            const id = element.MyQDeviceTypeId
+            if (id === 7 || id === 17 || id === 5) addDeviceToList(element)
+        })
+    }
 }
 
 const autoSetSingleGarageDevice = async () => {
@@ -86,11 +91,13 @@ const autoSetSingleGarageDevice = async () => {
             if (id === 7 || id === 17 || id === 5) configuration.config.deviceId = element.MyQDeviceId
         })
     }
-
 }
 
 const addDeviceToList = (element) => {
+    const apiVersion5 = configuration.defaultApiVersion === 5
     const device = {}
+
+    if (apiVersion5) return configuration.devices.push(element)
 
     device.MyQDeviceId = element.MyQDeviceId
     device.MyQDeviceTypeId = element.MyQDeviceTypeId
@@ -103,12 +110,10 @@ const callMyQDevice = async (options, type) => {
     return new Promise(async (resolve, reject) => {
         options.json = true
         options.gzip = true
-
-        //console.log(options)
+        options.method = type
 
         request(options, (err, res, data) => {
             if (err) reject(err)
-            //console.log(res.body)
             resolve(data)
         })
     })
@@ -130,7 +135,6 @@ const getToken = async () => {
         options.body = {}
         options.body.password = configuration.config.password
         options.body.username = configuration.config.user
-        options.method = configuration.constants.POST
 
         const data = await callMyQDevice(options, configuration.constants.POST)
 
@@ -140,7 +144,6 @@ const getToken = async () => {
         configuration.tokenTimeStamp = new Date()
 
         resolve(data.SecurityToken)
-
     })
 }
 
@@ -155,15 +158,11 @@ const getDevices = async () => {
 
         options.url = apiVersion5 === true ? configuration.constants.apiV5.getDevices + accountId + configuration.constants.apiV5.getDevicesSubUrl : configuration.constants.apiV4.getDevices
         options.headers = apiVersion5 === true ? setV5Header({ SecurityToken: token }) : setV4Header({ SecurityToken: token })
-        options.method = configuration.constants.GET
 
         const deviceList = await callMyQDevice(options, configuration.constants.GET)
 
-        //console.log(deviceList)
-
         resolve(deviceList)
-
-    }).catch(error => console.log(error))
+    })
 }
 
 const apiV5CallDevice = async (options, type, code) => {
@@ -184,15 +183,13 @@ const getAccountId = async () => {
 
         options.url = configuration.constants.apiV5.getAccounts
         options.headers = setV5Header({ SecurityToken: token })
-        options.method = configuration.constants.GET
 
         const accountId = await apiV5CallDevice(options, configuration.constants.GET)
 
         configuration.config.accountId = accountId
 
         resolve(accountId)
-
-    }).catch(error => console.log(error))
+    })
 }
 
 const getDoorState = async (deviceId) => {
@@ -204,7 +201,6 @@ const getDoorState = async (deviceId) => {
 
         options.url = apiVersion5 === true ? configuration.config.deviceUrl : configuration.constants.apiV4.baseUrl + configuration.constants.apiV4.stateUrlFront + id + configuration.constants.apiV4.doorStateUrlEnd
         options.headers = apiVersion5 === true ? setV5Header({ SecurityToken: token }) : setV4Header({ SecurityToken: token })
-        options.method = configuration.constants.GET
 
         let deviceState = await callMyQDevice(options, configuration.constants.GET)
 
@@ -213,37 +209,31 @@ const getDoorState = async (deviceId) => {
         const doorStatus = apiVersion5 ? deviceState : configuration.constants.doorStates[Number(deviceState.AttributeValue)]
 
         resolve(doorStatus)
-
-    }).catch(error => console.log(error))
+    })
 }
 
 const openDoor = async (deviceId) => {
     return new Promise(async (resolve, reject) => {
         const id = deviceId ? deviceId : configuration.config.deviceId
         const data = await setDoorState(configuration.constants.open, id)
-
         resolve(data)
-
-    }).catch(error => console.log(error))
+    })
 }
 
 const closeDoor = async (deviceId) => {
     return new Promise(async (resolve, reject) => {
         const id = deviceId ? deviceId : configuration.config.deviceId
         const data = await setDoorState(configuration.constants.close, id)
-
         resolve(data)
-
-    }).catch(error => console.log(error))
+    })
 }
 
 const setDoorState = async (change, deviceId) => {
     return new Promise(async (resolve, reject) => {
         const apiVersion5 = configuration.defaultApiVersion === 5
-        const serialNumber = configuration.config.deviceSerialNumber
+        let serialNumber = configuration.config.deviceSerialNumber
         const accountId = configuration.config.accountId
         const token = await getToken()
-        const url = configuration.constants.apiV5.getAccounts + accountId + configuration.constants.apiV5.devicesSub + serialNumber + configuration.constants.apiV5.actions
         const options = {}
 
         if (!apiVersion5) {
@@ -253,11 +243,11 @@ const setDoorState = async (change, deviceId) => {
             options.body.attributeName = configuration.constants.desiredDoorState
             options.body.AttributeValue = configuration.constants.types[change]
             options.body.myQDeviceId = deviceId
-            options.method = configuration.constants.PUT
         }
         else {
-            options.method = configuration.constants.PUT
-            options.url = url
+            serialNumber = deviceId ? deviceId : serialNumber
+
+            options.url = configuration.constants.apiV5.getAccounts + accountId + configuration.constants.apiV5.devicesSub + serialNumber + configuration.constants.apiV5.actions
             options.headers = {}
             options.headers[configuration.constants.contentType] = configuration.constants.apiV5.base.contentType
             options.headers.SecurityToken = token
@@ -270,55 +260,17 @@ const setDoorState = async (change, deviceId) => {
         const data = await callMyQDevice(options, configuration.constants.PUT)
 
         resolve(data)
-
-    }).catch(error => console.log(error))
-}
-
-const getLightState = async (deviceId) => {
-    return new Promise(async (resolve, reject) => {
-        const apiVersion5 = configuration.defaultApiVersion
-        const id = deviceId ? deviceId : configuration.config.deviceId
-        const token = await getToken()
-        const options = {}
-
-        options.url = configuration.constants.apiV4.baseUrl + configuration.constants.apiV4.stateUrlFront + id + configuration.constants.lightStateUrlEnd
-        options.headers = setV4Header({ SecurityToken: token })
-        options.method = configuration.constants.GET
-
-        const lightState = await callMyQDevice(options, configuration.constants.GET)
-        const lightStatus = configuration.constants.lightState[Number(lightState.AttributeValue)]
-
-        resolve(lightStatus)
-
-    }).catch(error => reject(error))
-}
-
-const setLightState = async (desiredState, deviceId) => {
-    return new Promise(async (resolve, reject) => {
-        const apiVersion5 = configuration.defaultApiVersion
-        const id = deviceId ? deviceId : configuration.config.deviceId
-        const token = await getToken()
-        const options = {}
-
-        options.url = configuration.constants.apiV4.baseUrl + configuration.constants.apiV4.changeDeviceStateUrl
-        options.headers = setV4Header({ SecurityToken: token })
-        options.body = {}
-        options.body.attributeName = configuration.constants.desiredLightState
-        options.body.AttributeValue = configuration.constants.lightState[desiredState]
-        options.body.myQDeviceId = id
-
-        const lightState = await callMyQDevice(options, configuration.constants.PUT)
-
-        resolve(lightState)
-
-    }).catch(error => reject(error))
+    })
 }
 
 const detectDoorStateChange = async (desiredState, deviceId) => {
     return new Promise(async (resolve, reject) => {
+        const apiVersion5 = configuration.defaultApiVersion === 5
         let stop = false
         const timeStamp = new Date()
         const thirtySeconds = 1 * 30 * 1000
+
+        if (apiVersion5 && desiredState != configuration.constants.apiV5.closed) desiredState = configuration.constants.apiV5.open
 
         while (!stop) {
             await pause()
@@ -329,23 +281,22 @@ const detectDoorStateChange = async (desiredState, deviceId) => {
             stop = true
             resolve(desiredState)
         }
-
-    }).catch(error => reject(error))
+    })
 }
 
 const getAutoAddedDevices = async () => {
     return new Promise((resolve, reject) => {
         const list = configuration.devices
         resolve(list)
-    }).catch(error => reject(error))
+    })
 }
 
 const checkApiVersion = async () => {
     const apiV4 = await apiV4Check()
     const apiV5 = await apiV5Check()
-    if (apiV4 && apiV5) configuration.defaultApiVersion = 5
+    if (apiV4 && apiV5) configuration.defaultApiVersion = 4
     if (apiV4 && !apiV5) configuration.defaultApiVersion = 4
-    if (!apiV4 && !apiv5) throw new Error(configuration.constants.emailError)
+    if (!apiV4 && !apiv5) throw new Error(configuration.constants.apiVersionError)
 }
 
 const apiV4Check = async () => {
@@ -357,9 +308,10 @@ const apiV4Check = async () => {
         options.body = {}
         options.body.password = configuration.config.password
         options.body.username = configuration.config.user
-        options.method = configuration.constants.POST
 
-        await callMyQDevice(options, configuration.constants.POST)
+        const data = await callMyQDevice(options, configuration.constants.POST)
+
+        if (data.SecurityToken === undefined) reject(false)
 
         resolve(true)
 
@@ -375,7 +327,6 @@ const apiV5Check = async () => {
         options.body = {}
         options.body.password = configuration.config.password
         options.body.username = configuration.config.user
-        options.method = configuration.constants.POST
 
         const data = await callMyQDevice(options, configuration.constants.POST)
 
@@ -397,5 +348,3 @@ exports.getDevices = getDevices
 exports.getDoorState = getDoorState
 exports.openDoor = openDoor
 exports.closeDoor = closeDoor
-exports.getLightState = getLightState
-exports.setLightState = setLightState
