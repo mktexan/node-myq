@@ -160,15 +160,16 @@ const deviceList = await myq.getDevices()
 Promise resolves a string of door state on success of the call. Reference the constants below to see the door state output.
 
 ``` javascript
-//deviceId is an optional overload
-const deviceId = 212121
+//optional overloads
+const deviceId = 212121 // used for API V4
+const deviceSerialNumber = 'CG0846469ED5'  // used for API V5
 
 myq.getDoorState(deviceId).then(doorState => {
     console.log(doorState)
     //Returns a string of door state. See Return Values at the bottom of the page.
 }).catch(error => {})
 
-//or
+//or just without the serial / device number if you have an auto set id or set the id / serial yourself
 const doorState = await myq.getDoorState()
 ```
 
@@ -177,8 +178,9 @@ const doorState = await myq.getDoorState()
 Promise resolves an object from the myQ device on success of call.
 
 ``` javascript
-//deviceId is an optional overload
-const deviceId = 212121
+//optional overloads
+const deviceId = 212121 // used for API V4
+const deviceSerialNumber = 'CG0846469ED5'  // used for API V5
 
 myq.openDoor(deviceId).then(data => {
     // Promise resolves on success with a return object from the MyQ device
@@ -187,7 +189,7 @@ myq.openDoor(deviceId).then(data => {
 //or
 await myq.openDoor()
 
-//or
+//or just without the serial / device number if you have an auto set id or set the id / serial yourself
 const response = await myq.openDoor()
 ```
 
@@ -207,17 +209,18 @@ This is an example return object
 Promise resolves an object from the myQ device on success of call.
 
 ``` javascript
-//deviceId is an optional overload
-const deviceId = 212121
+//optional overloads
+const deviceId = 212121 // used for API V4
+const deviceSerialNumber = 'CG0846469ED5'  // used for API V5
 
 myq.closeDoor(deviceId).then(data => {
     // Promise resolves on success with a return object from the MyQ device
 }).catch(error => {})
 
-//or
+//or just without the serial / device number if you have an auto set id or set the id / serial yourself
 await myq.closeDoor()
 
-//or
+//or just without the serial / device number if you have an auto set id or set the id / serial yourself
 const response = await myq.closeDoor()
 ```
 
@@ -238,7 +241,9 @@ Resolves when door action completes. Use this method once the door starts closin
 Rejects after 30 seconds and if the door is still in the same state.
 
 ``` javascript
-const deviceId = 212121
+//optional overloads
+const deviceId = 212121 // used for API V4
+const deviceSerialNumber = 'CG0846469ED5'  // used for API V5
 
 //pass either opened or closed as the state
 const desiredState = "closed"
@@ -251,7 +256,7 @@ myq.detectDoorStateChange(desiredState, deviceId).then(state => {
     // Promise resolves on success
 }).catch(error => {})
 
-//or 
+//or just without the serial / device number if you have an auto set id or set the id / serial yourself
 const state = await myq.detectDoorStateChange(desiredState)
 
 console.log('the door is now ' + state)
