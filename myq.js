@@ -12,27 +12,29 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 
-const bent = require('bent')
+const request = require('request')
 const configuration = require('./config')
 
-const setCredentials = (user, password, options) => {
+const setCredentials = async (user, password, options) => {
     if (!user) throw new Error(configuration.constants.emailError)
     if (!password) throw new Error(configuration.constants.passwordError)
 
     configuration.config.user = user
     configuration.config.password = password
 
-    checkApiVersion()
+    await checkApiVersion()
 
     if (options.deviceId) configuration.config.deviceId = options.deviceId
+    if (options.apiV5) configuration.defaultApiVersion = 5
+    else configuration.defaultApiVersion = 4
     if (options.autoSetGarageDoorDevice) autoSetSingleGarageDevice()
     if (options.autoSetMultipleGarageDoorDevices) autoSetMultipleGarageDoorDevices()
     if (options.smartTokenManagement) setRefreshToken()
 }
 
 const setV4Header = (token) => {
-    if (token) return Object.assign(configuration.constants.base, token)
-    return configuration.constants.base
+    if (token) return Object.assign(configuration.constants.apiV4.base, token)
+    return configuration.constants.apiV4.base
 }
 
 const setV5Header = (token) => {
@@ -59,11 +61,32 @@ const autoSetMultipleGarageDoorDevices = async () => {
 }
 
 const autoSetSingleGarageDevice = async () => {
+    const apiVersion5 = configuration.defaultApiVersion === 5
     const device = await getDevices()
-    device.Devices.forEach(element => {
-        const id = element.MyQDeviceTypeId
-        if (id === 7 || id === 17 || id === 5) configuration.config.deviceId = element.MyQDeviceId
-    })
+
+    if (apiVersion5) {
+        device.items.forEach(element => {
+            const deviceType = element.device_type
+            const serialNumber = element.serial_number
+            const deviceUrl = element.href
+            const openUrl = element.state.open
+            const closeUrl = element.state.close
+
+            if (deviceType === configuration.constants.apiV5.deviceTypes.virtualGarageDoorOpener) {
+                configuration.config.deviceSerialNumber = serialNumber
+                configuration.config.deviceUrl = deviceUrl
+                configuration.config.openUrl = openUrl
+                configuration.config.closeUrl = closeUrl
+            }
+        })
+    }
+    else {
+        device.Devices.forEach(element => {
+            const id = element.MyQDeviceTypeId
+            if (id === 7 || id === 17 || id === 5) configuration.config.deviceId = element.MyQDeviceId
+        })
+    }
+
 }
 
 const addDeviceToList = (element) => {
@@ -78,14 +101,22 @@ const addDeviceToList = (element) => {
 
 const callMyQDevice = async (options, type) => {
     return new Promise(async (resolve, reject) => {
-        const deviceCall = bent(type, configuration.constants.json)
-        const response = await deviceCall(options.url, options.body, options.headers)
-        resolve(response)
+        options.json = true
+        options.gzip = true
+
+        //console.log(options)
+
+        request(options, (err, res, data) => {
+            if (err) reject(err)
+            //console.log(res.body)
+            resolve(data)
+        })
     })
 }
 
 const getToken = async () => {
     return new Promise(async (resolve, reject) => {
+        const apiVersion5 = configuration.defaultApiVersion === 5
         const options = {}
         const tenMinutes = 10 * 60 * 1000
         const timeStamp = new Date()
@@ -94,11 +125,12 @@ const getToken = async () => {
 
         if (configTimeStamp && smartTokenManagement && timeStamp - configTimeStamp < tenMinutes) resolve(configuration.token)
 
-        options.url = configuration.constants.baseUrl + configuration.constants.validateUrl
-        options.headers = setV4Header()
+        options.url = apiVersion5 === true ? configuration.constants.apiV5.loginUrl : configuration.constants.apiV4.logIn
+        options.headers = apiVersion5 === true ? setV5Header() : setV4Header()
         options.body = {}
         options.body.password = configuration.config.password
         options.body.username = configuration.config.user
+        options.method = configuration.constants.POST
 
         const data = await callMyQDevice(options, configuration.constants.POST)
 
@@ -109,41 +141,80 @@ const getToken = async () => {
 
         resolve(data.SecurityToken)
 
-    }).catch(error => reject(error))
+    })
 }
 
 const getDevices = async () => {
     return new Promise(async (resolve, reject) => {
+        const apiVersion5 = configuration.defaultApiVersion === 5
         const token = await getToken()
         const options = {}
+        let accountId
 
-        options.url = configuration.constants.baseUrl + configuration.constants.devicesUrl
-        options.headers = setV4Header({ SecurityToken: token })
+        if (apiVersion5) accountId = await getAccountId()
+
+        options.url = apiVersion5 === true ? configuration.constants.apiV5.getDevices + accountId + configuration.constants.apiV5.getDevicesSubUrl : configuration.constants.apiV4.getDevices
+        options.headers = apiVersion5 === true ? setV5Header({ SecurityToken: token }) : setV4Header({ SecurityToken: token })
+        options.method = configuration.constants.GET
 
         const deviceList = await callMyQDevice(options, configuration.constants.GET)
 
-        if (deviceList.ErrorMessage != configuration.constants.emptyString) reject(deviceList.ErrorMessage)
+        //console.log(deviceList)
 
         resolve(deviceList)
 
-    }).catch(error => reject(error))
+    }).catch(error => console.log(error))
+}
+
+const apiV5CallDevice = async (options, type, code) => {
+    return new Promise(async (resolve, reject) => {
+        request['get'](options, function (error, response, body) {
+            const data = JSON.parse(body)
+            const devices = data.Items
+            configuration.config.accountId = devices[0].Id
+            resolve(devices[0].Id)
+        })
+    })
+}
+
+const getAccountId = async () => {
+    return new Promise(async (resolve, reject) => {
+        const token = await getToken()
+        const options = {}
+
+        options.url = configuration.constants.apiV5.getAccounts
+        options.headers = setV5Header({ SecurityToken: token })
+        options.method = configuration.constants.GET
+
+        const accountId = await apiV5CallDevice(options, configuration.constants.GET)
+
+        configuration.config.accountId = accountId
+
+        resolve(accountId)
+
+    }).catch(error => console.log(error))
 }
 
 const getDoorState = async (deviceId) => {
     return new Promise(async (resolve, reject) => {
+        const apiVersion5 = configuration.defaultApiVersion === 5
         const id = deviceId ? deviceId : configuration.config.deviceId
         const token = await getToken()
         const options = {}
 
-        options.url = configuration.constants.baseUrl + configuration.constants.stateUrlFront + id + configuration.constants.doorStateUrlEnd
-        options.headers = setV4Header({ SecurityToken: token })
+        options.url = apiVersion5 === true ? configuration.config.deviceUrl : configuration.constants.apiV4.baseUrl + configuration.constants.apiV4.stateUrlFront + id + configuration.constants.apiV4.doorStateUrlEnd
+        options.headers = apiVersion5 === true ? setV5Header({ SecurityToken: token }) : setV4Header({ SecurityToken: token })
+        options.method = configuration.constants.GET
 
-        const deviceState = await callMyQDevice(options, configuration.constants.GET)
-        const doorStatus = configuration.constants.doorStates[Number(deviceState.AttributeValue)]
+        let deviceState = await callMyQDevice(options, configuration.constants.GET)
+
+        if (apiVersion5) deviceState = deviceState.state.door_state
+
+        const doorStatus = apiVersion5 ? deviceState : configuration.constants.doorStates[Number(deviceState.AttributeValue)]
 
         resolve(doorStatus)
 
-    }).catch(error => reject(error))
+    }).catch(error => console.log(error))
 }
 
 const openDoor = async (deviceId) => {
@@ -151,11 +222,9 @@ const openDoor = async (deviceId) => {
         const id = deviceId ? deviceId : configuration.config.deviceId
         const data = await setDoorState(configuration.constants.open, id)
 
-        if (data.ErrorMessage != configuration.constants.emptyString) reject(data.ErrorMessage)
-
         resolve(data)
 
-    }).catch(error => reject(error))
+    }).catch(error => console.log(error))
 }
 
 const closeDoor = async (deviceId) => {
@@ -163,40 +232,58 @@ const closeDoor = async (deviceId) => {
         const id = deviceId ? deviceId : configuration.config.deviceId
         const data = await setDoorState(configuration.constants.close, id)
 
-        if (data.ErrorMessage) reject(data.ErrorMessage)
-
         resolve(data)
 
-    }).catch(error => reject(error))
+    }).catch(error => console.log(error))
 }
 
 const setDoorState = async (change, deviceId) => {
     return new Promise(async (resolve, reject) => {
+        const apiVersion5 = configuration.defaultApiVersion === 5
+        const serialNumber = configuration.config.deviceSerialNumber
+        const accountId = configuration.config.accountId
         const token = await getToken()
+        const url = configuration.constants.apiV5.getAccounts + accountId + configuration.constants.apiV5.devicesSub + serialNumber + configuration.constants.apiV5.actions
         const options = {}
 
-        options.url = configuration.constants.baseUrl + configuration.constants.changeDeviceStateUrl
-        options.headers = setV4Header({ SecurityToken: token })
-        options.body = {}
-        options.body.attributeName = configuration.constants.desiredDoorState
-        options.body.AttributeValue = configuration.constants.types[change]
-        options.body.myQDeviceId = deviceId
+        if (!apiVersion5) {
+            options.url = configuration.constants.apiV4.baseUrl + configuration.constants.apiV4.changeDeviceStateUrl
+            options.headers = setV4Header({ SecurityToken: token })
+            options.body = {}
+            options.body.attributeName = configuration.constants.desiredDoorState
+            options.body.AttributeValue = configuration.constants.types[change]
+            options.body.myQDeviceId = deviceId
+            options.method = configuration.constants.PUT
+        }
+        else {
+            options.method = configuration.constants.PUT
+            options.url = url
+            options.headers = {}
+            options.headers[configuration.constants.contentType] = configuration.constants.apiV5.base.contentType
+            options.headers.SecurityToken = token
+            options.headers.MyQApplicationId = configuration.constants.apiV5.base.MyQApplicationId
+            options.headers.Culture = configuration.constants.apiV5.base.Culture
+            options.body = {}
+            options.body.action_type = change
+        }
 
         const data = await callMyQDevice(options, configuration.constants.PUT)
 
         resolve(data)
 
-    }).catch(error => reject(error))
+    }).catch(error => console.log(error))
 }
 
 const getLightState = async (deviceId) => {
     return new Promise(async (resolve, reject) => {
+        const apiVersion5 = configuration.defaultApiVersion
         const id = deviceId ? deviceId : configuration.config.deviceId
         const token = await getToken()
         const options = {}
 
-        options.url = configuration.constants.baseUrl + configuration.constants.stateUrlFront + id + configuration.constants.lightStateUrlEnd
+        options.url = configuration.constants.apiV4.baseUrl + configuration.constants.apiV4.stateUrlFront + id + configuration.constants.lightStateUrlEnd
         options.headers = setV4Header({ SecurityToken: token })
+        options.method = configuration.constants.GET
 
         const lightState = await callMyQDevice(options, configuration.constants.GET)
         const lightStatus = configuration.constants.lightState[Number(lightState.AttributeValue)]
@@ -208,11 +295,12 @@ const getLightState = async (deviceId) => {
 
 const setLightState = async (desiredState, deviceId) => {
     return new Promise(async (resolve, reject) => {
+        const apiVersion5 = configuration.defaultApiVersion
         const id = deviceId ? deviceId : configuration.config.deviceId
         const token = await getToken()
         const options = {}
 
-        options.url = configuration.constants.baseUrl + configuration.constants.changeDeviceStateUrl
+        options.url = configuration.constants.apiV4.baseUrl + configuration.constants.apiV4.changeDeviceStateUrl
         options.headers = setV4Header({ SecurityToken: token })
         options.body = {}
         options.body.attributeName = configuration.constants.desiredLightState
@@ -255,7 +343,6 @@ const getAutoAddedDevices = async () => {
 const checkApiVersion = async () => {
     const apiV4 = await apiV4Check()
     const apiV5 = await apiV5Check()
-
     if (apiV4 && apiV5) configuration.defaultApiVersion = 5
     if (apiV4 && !apiV5) configuration.defaultApiVersion = 4
     if (!apiV4 && !apiv5) throw new Error(configuration.constants.emailError)
@@ -265,11 +352,12 @@ const apiV4Check = async () => {
     return new Promise(async (resolve, reject) => {
         const options = {}
 
-        options.url = configuration.constants.baseUrl + configuration.constants.validateUrl
+        options.url = configuration.constants.apiV4.baseUrl + configuration.constants.apiV4.validateUrl
         options.headers = setV4Header()
         options.body = {}
         options.body.password = configuration.config.password
         options.body.username = configuration.config.user
+        options.method = configuration.constants.POST
 
         await callMyQDevice(options, configuration.constants.POST)
 
@@ -287,6 +375,7 @@ const apiV5Check = async () => {
         options.body = {}
         options.body.password = configuration.config.password
         options.body.username = configuration.config.user
+        options.method = configuration.constants.POST
 
         const data = await callMyQDevice(options, configuration.constants.POST)
 

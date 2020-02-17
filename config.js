@@ -31,36 +31,51 @@ const constants = {
         16: 'WGDO Gateway DC',
         17: 'WGDO Garage Door'
     },
-    base: {
-        Culture: 'en',
-        BrandId: 2,
-        MyQApplicationId: 'OA9I/hgmPHFp9RYKJqCKfwnhh28uqLJzZ9KOJf1DXoo8N2XAaVX6A1wcLYyWsnnv',
-        ApiVersion: 4.1
-    },
-    deprecatedBase: {
-        Culture: 'en',
-        MyQApplicationId: 'Vj8pQggXLhLy0WHahglCD4N1nAkkXQtGYpq2HrHD7H1nvmbT55KqtN6RSF4ILB/i',
-    },
     apiV5: {
         baseUrl: 'https://api.myqdevice.com',
         loginUrl: 'https://api.myqdevice.com/api/v5/Login',
+        getDevices: 'https://api.myqdevice.com/api/v5.1/Accounts/',
+        getAccounts: 'https://api.myqdevice.com/api/v5/accounts/',
+        setDoorState: 'https://api.myqdevice.com/api/v5/DeviceAttribute/PutDeviceAttribute',
+        stateUrlFront: 'DeviceAttribute/GetDeviceAttribute?myQDeviceId=',
+        doorStateUrlEnd: '&attributeName=doorstate',
+        getDevicesSubUrl: '/Devices',
+        devicesSub: '/devices/',
+        actions: '/actions',
+        open: 'open',
+        close: 'close',
+        base: {
+            MyQApplicationId: 'JVM/G9Nwih5BwKgNCjLxiFUQxQijAebyyg8QUHr7JOrP+tuPb8iHfRHKwTmDzHOu',
+            'Content-Type': 'application/json',
+            Culture: 'en'
+        },
+        deviceTypes: {
+            virtualGarageDoorOpener: 'virtualgaragedooropener'
+        }
+    },
+    apiV4: {
+        baseUrl: 'https://myqexternal.myqdevice.com/api/v4/',
+        logIn: 'https://myqexternal.myqdevice.com/api/v4/User/Validate',
+        getDevices: 'https://myqexternal.myqdevice.com/api/v4/UserDeviceDetails/Get?filterOn=true',
+        setDoorState: 'https://myqexternal.myqdevice.com/api/v4/DeviceAttribute/PutDeviceAttribute',
+        stateUrlFront: 'DeviceAttribute/GetDeviceAttribute?myQDeviceId=',
+        doorStateUrlEnd: '&attributeName=doorstate',
+        lightStateUrlEnd: '&attributeName=lightstate',
+        devicesUrl: 'UserDeviceDetails/Get?filterOn=true',
+        changeDeviceStateUrl: 'DeviceAttribute/PutDeviceAttribute',
+        validateUrl: 'User/Validate',
         base: {
             Culture: 'en',
-            MyQApplicationId: 'JVM/G9Nwih5BwKgNCjLxiFUQxQijAebyyg8QUHr7JOrP+tuPb8iHfRHKwTmDzHOu',
-        },
+            BrandId: 2,
+            MyQApplicationId: 'OA9I/hgmPHFp9RYKJqCKfwnhh28uqLJzZ9KOJf1DXoo8N2XAaVX6A1wcLYyWsnnv',
+            ApiVersion: 4.1
+        }
     },
-    deprecatedUrl: 'https://myqexternal.myqdevice.com/',
+    contentType: 'Content-Type',
     emailError: 'Enter an email address',
     passwordError: 'Enter a password',
-    apiVersionError:'Your device is incompatible with API V4 and API V5',
+    apiVersionError: 'Your device is incompatible with API V4 and API V5',
     deviceSetError: 'Unable to auto set MyQ device',
-    baseUrl: 'https://myqexternal.myqdevice.com/api/v4/',
-    stateUrlFront: 'DeviceAttribute/GetDeviceAttribute?myQDeviceId=',
-    doorStateUrlEnd: '&attributeName=doorstate',
-    lightStateUrlEnd: '&attributeName=lightstate',
-    devicesUrl: 'UserDeviceDetails/Get?filterOn=true',
-    changeDeviceStateUrl: 'DeviceAttribute/PutDeviceAttribute',
-    validateUrl: 'User/Validate',
     desiredDoorState: 'desireddoorstate',
     desiredLightState: 'desiredlightstate',
     getAutoAddedDevices: 'getAutoAddedDevices',
@@ -68,14 +83,14 @@ const constants = {
     getDoorState: 'getDoorState',
     getDevices: 'getDevices',
     getToken: 'getToken',
-    timeOutRefreshToken: 600000,
+    timeOutRefreshToken: 100000,
     close: 'close',
     json: 'json',
     emptyString: '',
     open: 'open',
-    PUT: 'PUT',
-    POST: 'POST',
-    GET: 'GET'
+    PUT: 'put',
+    POST: 'post',
+    GET: 'get'
 }
 
 let token
