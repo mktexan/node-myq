@@ -52,6 +52,9 @@ const constants = {
         },
         deviceTypes: {
             virtualGarageDoorOpener: 'virtualgaragedooropener'
+        },
+        errorCodes:{
+            NotFound:'404.401'
         }
     },
     apiV4: {
@@ -70,8 +73,14 @@ const constants = {
             BrandId: 2,
             MyQApplicationId: 'OA9I/hgmPHFp9RYKJqCKfwnhh28uqLJzZ9KOJf1DXoo8N2XAaVX6A1wcLYyWsnnv',
             ApiVersion: 4.1
+        },
+        errorCodes:{
+            ErrorProcessingRequest: '217'
         }
     },
+    invalidDeviceId:'invalid deviceId',
+    invalidSerialNumber: 'invalid serial number',
+    invalidRequest: 'The request is invalid.',
     contentType: 'Content-Type',
     emailError: 'Enter an email address',
     passwordError: 'Enter a password',

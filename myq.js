@@ -50,6 +50,7 @@ const setRefreshToken = async () => {
 const autoSetMultipleGarageDoorDevices = async () => {
     const device = await getDevices()
     const apiVersion5 = configuration.defaultApiVersion === 5
+
     configuration.config.multipleDevices = true
 
     if (apiVersion5) {
@@ -160,7 +161,7 @@ const getDevices = async () => {
         options.headers = apiVersion5 === true ? setV5Header({ SecurityToken: token }) : setV4Header({ SecurityToken: token })
 
         const deviceList = await callMyQDevice(options, configuration.constants.GET)
-
+        //console.log(deviceList)
         resolve(deviceList)
     })
 }
@@ -200,12 +201,14 @@ const getDoorState = async (deviceId) => {
         const options = {}
         let url = configuration.config.deviceUrl
 
-        if (deviceId) url = configuration.constants.apiV5.getAccounts + configuration.config.accountId + configuration.constants.apiV5.devicesSub + deviceId
+        if (deviceId && apiVersion5) url = configuration.constants.apiV5.getAccounts + configuration.config.accountId + configuration.constants.apiV5.devicesSub + deviceId
 
         options.url = apiVersion5 === true ? url : configuration.constants.apiV4.baseUrl + configuration.constants.apiV4.stateUrlFront + id + configuration.constants.apiV4.doorStateUrlEnd
         options.headers = apiVersion5 === true ? setV5Header({ SecurityToken: token }) : setV4Header({ SecurityToken: token })
 
         let deviceState = await callMyQDevice(options, configuration.constants.GET)
+
+        if (deviceState.Message === configuration.constants.invalidRequest) reject(configuration.constants.invalidDeviceId)
 
         if (apiVersion5) deviceState = deviceState.state.door_state
 
@@ -232,6 +235,7 @@ const closeDoor = async (deviceId) => {
 }
 
 const setDoorState = async (change, deviceId) => {
+    console.log(deviceId)
     return new Promise(async (resolve, reject) => {
         const apiVersion5 = configuration.defaultApiVersion === 5
         let serialNumber = configuration.config.deviceSerialNumber
@@ -261,6 +265,9 @@ const setDoorState = async (change, deviceId) => {
         }
 
         const data = await callMyQDevice(options, configuration.constants.PUT)
+
+        if (data && data.code === configuration.constants.apiV5.errorCodes.NotFound) reject(data)
+        if (data && data.ReturnCode === configuration.constants.apiV4.errorCodes.ErrorProcessingRequest) reject(data)
 
         resolve(data)
     })
