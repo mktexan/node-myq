@@ -82,13 +82,13 @@ Here is the V5 return object for Get Devices
             device_platform: 'myq',
             device_type: 'virtualgaragedooropener',
             name: 'Garage Door',
-            parent_device: 'http://api.myqdevice.com/api/v5/accounts/79a4960d-e449-4c80-85f7-e281asddsa3d31/devices/GW2300201C61',
+            parent_device: 'http://api.myqdevice.com/api/v5/accounts/79a4960d-e449-4c80-85f7-e281asddas03d31/devices/GW2300201C61',
             parent_device_id: 'GW2300201C61',
             created_date: '2020-02-01T16:02:20.773',
             state: [Object]
         },
         {
-            href: 'http://api.myqdevice.com/api/v5/accounts/79a4960d-e449-4c80-85f7-e281bsasad31/devices/GW2300201C61',
+            href: 'http://api.myqdevice.com/api/v5/accounts/79a4960d-e449-4c80-85f7-e281asddas03d31/devices/GW2300201C61',
             serial_number: 'GW2300201C61',
             device_family: 'gateway',
             device_platform: 'myq',
@@ -193,7 +193,7 @@ await myq.openDoor()
 const response = await myq.openDoor()
 ```
 
-This is an example return object 
+This is an example return object for API V4
 
 ``` javascript
 {
@@ -224,7 +224,7 @@ await myq.closeDoor()
 const response = await myq.closeDoor()
 ```
 
-This is an example return object 
+This is an example return object for API V4
 
 ``` javascript
 {
