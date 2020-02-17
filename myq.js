@@ -25,7 +25,6 @@ const setCredentials = async (user, password, options) => {
     if (options.deviceId) configuration.config.deviceId = options.deviceId
     if (options.apiVersion) options.apiVersion != 5 && options.apiVersion != 4 ? configuration.defaultApiVersion = 4 : configuration.defaultApiVersion = options.apiVersion
     else await checkAndSetApiVersion()
-    console.log(configuration.defaultApiVersion)
     if (options.autoSetGarageDoorDevice) autoSetSingleGarageDevice()
     if (options.autoSetMultipleGarageDoorDevices) autoSetMultipleGarageDoorDevices()
     if (options.smartTokenManagement) setRefreshToken()
