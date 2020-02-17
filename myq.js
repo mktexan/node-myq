@@ -198,8 +198,11 @@ const getDoorState = async (deviceId) => {
         const id = deviceId ? deviceId : configuration.config.deviceId
         const token = await getToken()
         const options = {}
+        let url = configuration.config.deviceUrl
 
-        options.url = apiVersion5 === true ? configuration.config.deviceUrl : configuration.constants.apiV4.baseUrl + configuration.constants.apiV4.stateUrlFront + id + configuration.constants.apiV4.doorStateUrlEnd
+        if (deviceId) url = configuration.constants.apiV5.getAccounts + configuration.config.accountId + configuration.constants.apiV5.devicesSub + deviceId
+
+        options.url = apiVersion5 === true ? url : configuration.constants.apiV4.baseUrl + configuration.constants.apiV4.stateUrlFront + id + configuration.constants.apiV4.doorStateUrlEnd
         options.headers = apiVersion5 === true ? setV5Header({ SecurityToken: token }) : setV4Header({ SecurityToken: token })
 
         let deviceState = await callMyQDevice(options, configuration.constants.GET)
