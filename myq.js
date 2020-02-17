@@ -161,7 +161,7 @@ const getDevices = async () => {
         options.headers = apiVersion5 === true ? setV5Header({ SecurityToken: token }) : setV4Header({ SecurityToken: token })
 
         const deviceList = await callMyQDevice(options, configuration.constants.GET)
-        //console.log(deviceList)
+
         resolve(deviceList)
     })
 }
@@ -235,7 +235,6 @@ const closeDoor = async (deviceId) => {
 }
 
 const setDoorState = async (change, deviceId) => {
-    console.log(deviceId)
     return new Promise(async (resolve, reject) => {
         const apiVersion5 = configuration.defaultApiVersion === 5
         let serialNumber = configuration.config.deviceSerialNumber
