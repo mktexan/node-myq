@@ -115,17 +115,6 @@ const getDevices = async () => {
     })
 }
 
-const apiV5CallDevice = async (options, type, code) => {
-    return new Promise(async (resolve, reject) => {
-        request['get'](options, function (error, response, body) {
-            const data = JSON.parse(body)
-            const devices = data.Items
-            configuration.config.accountId = devices[0].Id
-            resolve(devices[0].Id)
-        })
-    })
-}
-
 const getAccountId = async () => {
     return new Promise(async (resolve, reject) => {
         const token = await getToken()
@@ -134,30 +123,31 @@ const getAccountId = async () => {
         options.url = configuration.constants.apiV5.getAccounts
         options.headers = setV5Header({ SecurityToken: token })
 
-        const accountId = await apiV5CallDevice(options, configuration.constants.GET)
+        const accountData = await callMyQDevice(options, configuration.constants.GET)
+        const devices = accountData.Items
+        
+        configuration.config.accountId = devices[0].Id
 
         configuration.config.accountId = accountId
 
-        resolve(accountId)
+        resolve(devices[0].Id)
     })
 }
 
-const getDoorState = async (deviceId) => {
+const getDoorState = async (serialNumber) => {
     return new Promise(async (resolve, reject) => {
-        const apiVersion5 = configuration.defaultApiVersion === 5
-        const id = deviceId ? deviceId : configuration.config.deviceId
         const token = await getToken()
         const options = {}
         let url = configuration.config.deviceUrl
 
-        if (deviceId) url = configuration.constants.apiV5.getAccounts + configuration.config.accountId + configuration.constants.apiV5.devicesSub + deviceId
+        if (serialNumber) url = configuration.constants.apiV5.getAccounts + configuration.config.accountId + configuration.constants.apiV5.devicesSub + serialNumber
 
         options.url = url
         options.headers = setV5Header({ SecurityToken: token })
 
         let deviceState = await callMyQDevice(options, configuration.constants.GET)
 
-        if (deviceState.Message === configuration.constants.invalidRequest) reject(configuration.constants.invalidDeviceId)
+        if (deviceState.Message === configuration.constants.invalidRequest) reject(configuration.constants.invalidSerialNumber)
 
         const doorStatus = deviceState.state.door_state
 
@@ -165,30 +155,28 @@ const getDoorState = async (deviceId) => {
     })
 }
 
-const openDoor = async (deviceId) => {
+const openDoor = async (providedSerialNumber) => {
     return new Promise(async (resolve, reject) => {
-        const id = deviceId ? deviceId : configuration.config.deviceId
-        const data = await setDoorState(configuration.constants.open, id)
+        const data = await setDoorState(configuration.constants.open, providedSerialNumber)
         resolve(data)
     })
 }
 
-const closeDoor = async (deviceId) => {
+const closeDoor = async (providedSerialNumber) => {
     return new Promise(async (resolve, reject) => {
-        const id = deviceId ? deviceId : configuration.config.deviceId
-        const data = await setDoorState(configuration.constants.close, id)
+        const data = await setDoorState(configuration.constants.close, providedSerialNumber)
         resolve(data)
     })
 }
 
-const setDoorState = async (change, deviceId) => {
+const setDoorState = async (change, providedSerialNumber) => {
     return new Promise(async (resolve, reject) => {
         let serialNumber = configuration.config.deviceSerialNumber
         const accountId = configuration.config.accountId
         const token = await getToken()
         const options = {}
 
-        serialNumber = deviceId ? deviceId : serialNumber
+        serialNumber = providedSerialNumber ? providedSerialNumber : serialNumber
 
         options.url = configuration.constants.apiV5.getAccounts + accountId + configuration.constants.apiV5.devicesSub + serialNumber + configuration.constants.apiV5.actions
         options.headers = {}
@@ -208,7 +196,7 @@ const setDoorState = async (change, deviceId) => {
     })
 }
 
-const detectDoorStateChange = async (desiredState, deviceId) => {
+const detectDoorStateChange = async (desiredState, providedSerialNumber) => {
     return new Promise(async (resolve, reject) => {
         let stop = false
         const timeStamp = new Date()
@@ -218,7 +206,7 @@ const detectDoorStateChange = async (desiredState, deviceId) => {
 
         while (!stop) {
             await pause()
-            const doorState = await getDoorState(deviceId)
+            const doorState = await getDoorState(providedSerialNumber)
             const tickTimestamp = new Date()
             if (doorState != desiredState && timeStamp - tickTimestamp < thirtySeconds) continue
             if (timeStamp - tickTimestamp > thirtySeconds) reject()

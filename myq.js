@@ -18,7 +18,7 @@ const configuration = require('./config')
 
 let api = v4Api
 
-const setCredentials = async (user, password, options) => {
+const setCredentials = (user, password, options) => {
     if (!user) throw new Error(configuration.constants.emailError)
     if (!password) throw new Error(configuration.constants.passwordError)
 
