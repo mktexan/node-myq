@@ -27,8 +27,8 @@ const setCredentials = async (user, password, options) => {
 
     if (options.deviceId) configuration.config.deviceId = options.deviceId
     if (options.apiVersion) options.apiVersion != 5 && options.apiVersion != 4 ? api = v4Api : configuration.defaultApiVersion = options.apiVersion
-    if (options.apiVersion === 4) api = v4Api
-    else api = v5Api
+    if (options.apiVersion && options.apiVersion === 5) api = v5Api
+    else api = v4Api
     if (options.autoSetGarageDoorDevice) autoSetSingleGarageDevice()
     if (options.autoSetMultipleGarageDoorDevices) autoSetMultipleGarageDoorDevices()
     if (options.smartTokenManagement) setRefreshToken()
@@ -90,74 +90,18 @@ const autoSetSingleGarageDevice = async () => {
 
 const addDeviceToList = (element) => api.addDeviceToList(element)
 
-const getDevices = async () => await api.getDevices()
+const getDevices = () => api.getDevices()
 
-const getDoorState = async (deviceId) => await api.getDoorState(deviceId)
+const getDoorState = (deviceId) => api.getDoorState(deviceId)
 
-const openDoor = async (deviceId) => await api.openDoor(deviceId)
+const openDoor = (deviceId) => api.openDoor(deviceId)
 
-const closeDoor = async (deviceId) => await api.closeDoor(deviceId)
+const closeDoor = (deviceId) => api.closeDoor(deviceId)
 
 //const detectDoorStateChange = (desiredState, deviceId) => api.detectDoorStateChange(desiredState, deviceId)
-const detectDoorStateChange = async (desiredState, deviceId) => await api.detectDoorStateChange(desiredState, deviceId)
+const detectDoorStateChange = (desiredState, deviceId) => api.detectDoorStateChange(desiredState, deviceId)
 
-const getAutoAddedDevices = async () => await api.getAutoAddedDevices()
-
-const checkAndSetApiVersion = async () => {
-    // const apiV4 = await apiV4Check()
-    // const apiV5 = await apiV5Check()
-    // if (apiV4 && apiV5) {
-    //     configuration.defaultApiVersion = 4
-    //     api = v4Api
-    // }
-    // if (apiV4 && !apiV5) {
-    //     configuration.defaultApiVersion = 4
-    //     api = v4Api
-    // }
-    // if (!apiV4 && !apiv5) throw new Error(configuration.constants.apiVersionError)
-}
-
-const apiV4Check = async () => {
-    return new Promise(async (resolve, reject) => {
-        const options = {}
-
-        options.url = configuration.constants.apiV4.baseUrl + configuration.constants.apiV4.validateUrl
-        options.headers = setV4Header()
-        options.body = {}
-        options.body.password = configuration.config.password
-        options.body.username = configuration.config.user
-
-        const data = await callMyQDevice(options, configuration.constants.POST)
-
-        if (data.SecurityToken === undefined) reject(false)
-
-        resolve(true)
-
-    }).catch(error => reject(false))
-}
-
-const apiV5Check = async () => {
-    return new Promise(async (resolve, reject) => {
-        const options = {}
-
-        options.url = configuration.constants.apiV5.loginUrl
-        options.headers = setV5Header()
-        options.body = {}
-        options.body.password = configuration.config.password
-        options.body.username = configuration.config.user
-
-        const data = await callMyQDevice(options, configuration.constants.POST)
-
-        if (data.SecurityToken === undefined) reject(false)
-
-        resolve(true)
-
-    }).catch(error => reject(false))
-}
-
-const pause = async () => {
-    return new Promise(resolve => setTimeout(() => { resolve() }, 2000)).catch(error => reject(error))
-}
+const getAutoAddedDevices = () => api.getAutoAddedDevices()
 
 exports.getAutoAddedDevices = getAutoAddedDevices
 exports.setCredentials = setCredentials

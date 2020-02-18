@@ -20,60 +20,6 @@ const setV5Header = (token) => {
     return configuration.constants.apiV5.base
 }
 
-const setRefreshToken = async () => {
-    configuration.config.smartTokenManagement = true
-    setInterval(() => {
-        getToken()
-    }, configuration.constants.timeOutRefreshToken)
-}
-
-const autoSetMultipleGarageDoorDevices = async () => {
-    const device = await getDevices()
-    const apiVersion5 = configuration.defaultApiVersion === 5
-
-    configuration.config.multipleDevices = true
-
-    if (apiVersion5) {
-        device.items.forEach(element => {
-            if (element.device_type === configuration.constants.apiV5.deviceTypes.virtualGarageDoorOpener) addDeviceToList(element)
-
-        })
-    } else {
-        device.Devices.forEach(element => {
-            const id = element.MyQDeviceTypeId
-            if (id === 7 || id === 17 || id === 5) addDeviceToList(element)
-        })
-    }
-}
-
-const autoSetSingleGarageDevice = async () => {
-    const apiVersion5 = configuration.defaultApiVersion === 5
-    const device = await getDevices()
-
-    if (apiVersion5) {
-        device.items.forEach(element => {
-            const deviceType = element.device_type
-            const serialNumber = element.serial_number
-            const deviceUrl = element.href
-            const openUrl = element.state.open
-            const closeUrl = element.state.close
-
-            if (deviceType === configuration.constants.apiV5.deviceTypes.virtualGarageDoorOpener) {
-                configuration.config.deviceSerialNumber = serialNumber
-                configuration.config.deviceUrl = deviceUrl
-                configuration.config.openUrl = openUrl
-                configuration.config.closeUrl = closeUrl
-            }
-        })
-    }
-    else {
-        device.Devices.forEach(element => {
-            const id = element.MyQDeviceTypeId
-            if (id === 7 || id === 17 || id === 5) configuration.config.deviceId = element.MyQDeviceId
-        })
-    }
-}
-
 const addDeviceToList = (element) => {
     configuration.devices.push(element)
 }
