@@ -20,6 +20,42 @@ const setV5Header = (token) => {
     return configuration.constants.apiV5.base
 }
 
+const autoSetMultipleGarageDoorDevices = async () => {
+    const device = await getDevices()
+
+    configuration.config.multipleDevices = true
+
+    device.items.forEach(element => {
+        if (element.device_type === configuration.constants.apiV5.deviceTypes.virtualGarageDoorOpener) addDeviceToList(element)
+    })
+}
+
+const setRefreshToken = async () => {
+    configuration.config.smartTokenManagement = true
+    setInterval(() => {
+        getToken()
+    }, configuration.constants.timeOutRefreshToken)
+}
+
+const autoSetSingleGarageDevice = async () => {
+    const device = await getDevices()
+
+    device.items.forEach(element => {
+        const deviceType = element.device_type
+        const serialNumber = element.serial_number
+        const deviceUrl = element.href
+        const openUrl = element.state.open
+        const closeUrl = element.state.close
+
+        if (deviceType === configuration.constants.apiV5.deviceTypes.virtualGarageDoorOpener) {
+            configuration.config.deviceSerialNumber = serialNumber
+            configuration.config.deviceUrl = deviceUrl
+            configuration.config.openUrl = openUrl
+            configuration.config.closeUrl = closeUrl
+        }
+    })
+}
+
 const addDeviceToList = (element) => {
     configuration.devices.push(element)
 }
@@ -203,6 +239,9 @@ const pause = async () => {
     return new Promise(resolve => setTimeout(() => { resolve() }, 2000)).catch(error => reject(error))
 }
 
+exports.setRefreshToken = setRefreshToken
+exports.autoSetMultipleGarageDoorDevices = autoSetMultipleGarageDoorDevices
+exports.autoSetSingleGarageDevice = autoSetSingleGarageDevice
 exports.getAccountId = getAccountId
 exports.getToken = getToken
 exports.addDeviceToList = addDeviceToList

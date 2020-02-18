@@ -6,6 +6,25 @@ const setV4Header = (token) => {
     return configuration.constants.apiV4.base
 }
 
+const autoSetMultipleGarageDoorDevices = async () => {
+    const device = await api.getDevices()
+
+    configuration.config.multipleDevices = true
+
+    device.Devices.forEach(element => {
+        const id = element.MyQDeviceTypeId
+        if (id === 7 || id === 17 || id === 5) addDeviceToList(element)
+    })
+}
+
+const setRefreshToken = async () => {
+    configuration.config.smartTokenManagement = true
+    setInterval(() => {
+        getToken()
+    }, configuration.constants.timeOutRefreshToken)
+}
+
+
 const addDeviceToList = (element) => {
     const device = {}
 
@@ -14,6 +33,15 @@ const addDeviceToList = (element) => {
     device.MyQDeviceTypeName = element.MyQDeviceTypeName
 
     configuration.devices.push(device)
+}
+
+const autoSetSingleGarageDevice = async () => {
+    const device = await getDevices()
+
+    device.Devices.forEach(element => {
+        const id = element.MyQDeviceTypeId
+        if (id === 7 || id === 17 || id === 5) configuration.config.deviceId = element.MyQDeviceId
+    })
 }
 
 const callMyQDevice = async (options, type) => {
@@ -164,6 +192,9 @@ const pause = async () => {
     return new Promise(resolve => setTimeout(() => { resolve() }, 2000)).catch(error => reject(error))
 }
 
+exports.setRefreshToken = setRefreshToken
+exports.autoSetMultipleGarageDoorDevices = autoSetMultipleGarageDoorDevices
+exports.autoSetSingleGarageDevice = autoSetSingleGarageDevice
 exports.setDoorState = setDoorState
 exports.getToken = getToken
 exports.addDeviceToList = addDeviceToList
