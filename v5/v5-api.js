@@ -128,8 +128,6 @@ const getAccountId = async () => {
         
         configuration.config.accountId = devices[0].Id
 
-        configuration.config.accountId = accountId
-
         resolve(devices[0].Id)
     })
 }
