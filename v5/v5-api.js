@@ -15,10 +15,7 @@
 const request = require('request')
 const configuration = require('../config')
 
-const setV5Header = (token) => {
-    if (token) return Object.assign(configuration.constants.apiV5.base, token)
-    return configuration.constants.apiV5.base
-}
+const setV5Header = (token) => token ? Object.assign(configuration.constants.apiV5.base, token) : configuration.constants.apiV5.base
 
 const autoSetMultipleGarageDoorDevices = async () => {
     const device = await getDevices()
@@ -57,6 +54,10 @@ const autoSetSingleGarageDevice = async () => {
 }
 
 const addDeviceToList = (element) => configuration.devices.push(element)
+
+const openDoor = async (providedSerialNumber) => await setDoorState(configuration.constants.open, providedSerialNumber)
+
+const closeDoor = async (providedSerialNumber) => await setDoorState(configuration.constants.close, providedSerialNumber)
 
 const callMyQDevice = async (options, type) => {
     return new Promise(async (resolve, reject) => {
@@ -148,20 +149,6 @@ const getDoorState = async (serialNumber) => {
         const doorStatus = deviceState.state.door_state
 
         resolve(doorStatus)
-    })
-}
-
-const openDoor = async (providedSerialNumber) => {
-    return new Promise(async (resolve, reject) => {
-        const data = await setDoorState(configuration.constants.open, providedSerialNumber)
-        resolve(data)
-    })
-}
-
-const closeDoor = async (providedSerialNumber) => {
-    return new Promise(async (resolve, reject) => {
-        const data = await setDoorState(configuration.constants.close, providedSerialNumber)
-        resolve(data)
     })
 }
 

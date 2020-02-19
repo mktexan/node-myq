@@ -15,10 +15,7 @@
 const request = require('request')
 const configuration = require('../config')
 
-const setV4Header = (token) => {
-    if (token) return Object.assign(configuration.constants.apiV4.base, token)
-    return configuration.constants.apiV4.base
-}
+const setV4Header = (token) => token ? Object.assign(configuration.constants.apiV4.base, token) : configuration.constants.apiV4.base
 
 const autoSetMultipleGarageDoorDevices = async () => {
     const device = await api.getDevices()
@@ -111,8 +108,7 @@ const getDevices = async () => {
         if (deviceList.ErrorMessage != configuration.constants.emptyString) reject(deviceList.ErrorMessage)
 
         resolve(deviceList)
-
-    }).catch(error => reject(error))
+    })
 }
 
 const getDoorState = async (deviceId) => {
@@ -128,8 +124,7 @@ const getDoorState = async (deviceId) => {
         const doorStatus = configuration.constants.doorStates[Number(deviceState.AttributeValue)]
 
         resolve(doorStatus)
-
-    }).catch(error => reject(error))
+    })
 }
 
 const openDoor = async (deviceId) => {
@@ -140,8 +135,7 @@ const openDoor = async (deviceId) => {
         if (data.ErrorMessage != configuration.constants.emptyString) reject(data.ErrorMessage)
 
         resolve(data)
-
-    }).catch(error => reject(error))
+    })
 }
 
 const closeDoor = async (deviceId) => {
@@ -152,8 +146,7 @@ const closeDoor = async (deviceId) => {
         if (data.ErrorMessage) reject(data.ErrorMessage)
 
         resolve(data)
-
-    }).catch(error => reject(error))
+    })
 }
 
 const setDoorState = async (change, deviceId) => {
@@ -171,8 +164,7 @@ const setDoorState = async (change, deviceId) => {
         const data = await callMyQDevice(options, configuration.constants.PUT)
 
         resolve(data)
-
-    }).catch(error => reject(error))
+    })
 }
 
 const detectDoorStateChange = async (desiredState, deviceId) => {
@@ -190,17 +182,15 @@ const detectDoorStateChange = async (desiredState, deviceId) => {
             stop = true
             resolve(desiredState)
         }
-
-    }).catch(error => reject(error))
+    })
 }
 
 const getAutoAddedDevices = async () => {
     return new Promise((resolve, reject) => {
         const list = configuration.devices
         resolve(list)
-    }).catch(error => reject(error))
+    })
 }
-
 
 const pause = async () => {
     return new Promise(resolve => setTimeout(() => { resolve() }, 2000)).catch(error => reject(error))
