@@ -17,6 +17,14 @@ const configuration = require('../config')
 
 const setV5Header = (token) => token ? Object.assign(configuration.constants.apiV5.base, token) : configuration.constants.apiV5.base
 
+const addDeviceToList = (element) => configuration.devices.push(element)
+
+const openDoor = async (providedSerialNumber) => await setDoorState(configuration.constants.open, providedSerialNumber)
+
+const closeDoor = async (providedSerialNumber) => await setDoorState(configuration.constants.close, providedSerialNumber)
+
+const pause = async () => new Promise(resolve => setTimeout(() => { resolve() }, 2000)).catch(error => reject(error))
+
 const autoSetMultipleGarageDoorDevices = async () => {
     const device = await getDevices()
 
@@ -52,12 +60,6 @@ const autoSetSingleGarageDevice = async () => {
         }
     })
 }
-
-const addDeviceToList = (element) => configuration.devices.push(element)
-
-const openDoor = async (providedSerialNumber) => await setDoorState(configuration.constants.open, providedSerialNumber)
-
-const closeDoor = async (providedSerialNumber) => await setDoorState(configuration.constants.close, providedSerialNumber)
 
 const callMyQDevice = async (options, type) => {
     return new Promise(async (resolve, reject) => {
@@ -204,10 +206,6 @@ const getAutoAddedDevices = async () => {
         const list = configuration.devices
         resolve(list)
     })
-}
-
-const pause = async () => {
-    return new Promise(resolve => setTimeout(() => { resolve() }, 2000)).catch(error => reject(error))
 }
 
 exports.setRefreshToken = setRefreshToken

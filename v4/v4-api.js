@@ -35,7 +35,6 @@ const setRefreshToken = async () => {
     }, configuration.constants.timeOutRefreshToken)
 }
 
-
 const addDeviceToList = (element) => {
     const device = {}
 
@@ -192,9 +191,7 @@ const getAutoAddedDevices = async () => {
     })
 }
 
-const pause = async () => {
-    return new Promise(resolve => setTimeout(() => { resolve() }, 2000)).catch(error => reject(error))
-}
+const pause = async () => new Promise(resolve => setTimeout(() => { resolve() }, 2000)).catch(error => reject(error))
 
 exports.setRefreshToken = setRefreshToken
 exports.autoSetMultipleGarageDoorDevices = autoSetMultipleGarageDoorDevices
