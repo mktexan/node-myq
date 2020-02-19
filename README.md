@@ -16,9 +16,11 @@ const myq = require('node-myq')
 const options = {
     autoSetGarageDoorDevice: true, //automatically adds a SINGLE DOOR to the API if true
     autoSetMultipleGarageDoorDevices: false, //automatically adds MULTIPLE DOORS to the API if true
-    deviceId: 213213, //manually set your own single deviceId, otherwise leave this option out
+    deviceId || deviceSerialNumber: 213213, //manually set your own single deviceId or serial number. Leave out if auto set single or multiple devices
     smartTokenManagement: true, // allows for significantly increased performance by managing token state
     apiVersion: 5 // Set either 4 or 5. Defaults to 4 if no option provided untill MyQ API V4 is no longer supported
+    //deviceId = int
+    //deviceSerialNumber = string
 }
 
 myq.setCredentials('email@example.com', 'password', options)

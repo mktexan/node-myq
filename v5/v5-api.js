@@ -56,9 +56,7 @@ const autoSetSingleGarageDevice = async () => {
     })
 }
 
-const addDeviceToList = (element) => {
-    configuration.devices.push(element)
-}
+const addDeviceToList = (element) => configuration.devices.push(element)
 
 const callMyQDevice = async (options, type) => {
     return new Promise(async (resolve, reject) => {
@@ -125,7 +123,7 @@ const getAccountId = async () => {
 
         const accountData = await callMyQDevice(options, configuration.constants.GET)
         const devices = accountData.Items
-        
+
         configuration.config.accountId = devices[0].Id
 
         resolve(devices[0].Id)
