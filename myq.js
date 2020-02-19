@@ -26,7 +26,6 @@ const setCredentials = (user, password, options) => {
     configuration.config.password = password
 
     if (options.deviceId) configuration.config.deviceId = options.deviceId
-    if (options.apiVersion) options.apiVersion != 5 && options.apiVersion != 4 ? api = v4Api : configuration.defaultApiVersion = options.apiVersion
     if (options.apiVersion && options.apiVersion === 5) api = v5Api
     if (options.autoSetGarageDoorDevice) api.autoSetSingleGarageDevice()
     if (options.autoSetMultipleGarageDoorDevices) api.autoSetMultipleGarageDoorDevices()
