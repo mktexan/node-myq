@@ -28,12 +28,12 @@ myq.setCredentials('email@example.com', 'password', options)
 
 # Methods
 
-deviceId is an optional overload. Use it if you have multiple devices in your network and wish to call a specific device.
+deviceId and serialNumber are optional overloads. Use them if you have multiple devices in your account and wish to call a specific device.
 If deviceId is not provided, the API will default to the single deviceId that you set using autoSetGarageDoorDevice: true or deviceId: yourDeviceId.
 
 ## getDevices()
 
-A promise that returns an array of devices detected on the network
+A promise that returns an array of devices detected on the account 
 
 ``` javascript
 //returns array of devices detected on the network
