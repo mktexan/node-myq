@@ -47,16 +47,12 @@ const autoSetSingleGarageDevice = async () => {
 
     device.items.forEach(element => {
         const deviceType = element.device_type
-        const serialNumber = element.serial_number
-        const deviceUrl = element.href
-        const openUrl = element.state.open
-        const closeUrl = element.state.close
 
         if (deviceType === configuration.constants.apiV5.deviceTypes.virtualGarageDoorOpener) {
-            configuration.config.deviceSerialNumber = serialNumber
-            configuration.config.deviceUrl = deviceUrl
-            configuration.config.openUrl = openUrl
-            configuration.config.closeUrl = closeUrl
+            configuration.config.deviceSerialNumber = element.serial_number
+            configuration.config.deviceUrl = element.href
+            configuration.config.openUrl = element.state.open
+            configuration.config.closeUrl = element.state.close
         }
     })
 }
